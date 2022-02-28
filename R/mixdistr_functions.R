@@ -1,3 +1,31 @@
+#' Distribution functions and random number generation
+#'
+#' Probability density, cumulative distribution function, quantile function and
+#' random variate generation for a mixture distribuion with the Dirac measure at
+#' point zero and the Mittag-Leffler distribution as components.
+#'
+#' Now the details are coming... coming soon.
+#' @seealso \code{\link[MittagLeffleR]{MittagLeffleR}} for the Mittag-Leffler functions
+#' @aliases mixdistr rmixdistr pmixdistr qmixdistr dmixdistr
+#' @param n number of observations.
+#' @param p vector of probabilities.
+#' @param x,q vector of quantiles.
+#' @param tail tail parameter
+#' @param ei extremal index / the weighting
+#' @param scale scale parameter, default NULL sets scale = ei ^ (-1 / tail)
+#'
+#' @return \code{rmixdistr} generates random variables,
+#' \code{pmixdistr} returns the distribution function,
+#' \code{qmixdistr} returns the quantile function, and
+#' \code{dmixdistr} returns the density.
+#'
+#' @examples
+#' rmixdistr(n = 10, tail = 0.8, ei = 0.5)
+#' pmixdistr(q = 10, tail = 0.8, ei = 0.5)
+#' qmixdistr(p = 0:10 / 10, tail = 0.8, ei = 0.5)
+#' dmixdistr(x = c(0, 1, 10), tail = 0.8, ei = 0.5)
+#' @name mixdistr
+#' @export
 rmixdistr <- function(n, tail, ei, scale = NULL) {
   if (is.null(scale)) {
     scale <- ei ^ (-1 / tail)
@@ -12,6 +40,8 @@ rmixdistr <- function(n, tail, ei, scale = NULL) {
   return(r)
 }
 
+#' @rdname mixdistr
+#' @export
 pmixdistr <-  function(q, tail, ei, scale = NULL) {
   if (is.null(scale)) {
     scale <- ei ^ (-1 / tail)
@@ -30,6 +60,8 @@ pmixdistr <-  function(q, tail, ei, scale = NULL) {
   return(p)
 }
 
+#' @rdname mixdistr
+#' @export
 qmixdistr <-  function(p, tail, ei, scale = NULL) {
   if (is.null(scale)) {
     scale <- ei ^ (-1 / tail)
@@ -49,6 +81,8 @@ qmixdistr <-  function(p, tail, ei, scale = NULL) {
   return(q)
 }
 
+#' @rdname mixdistr
+#' @export
 dmixdistr <- function(x, tail, ei, scale = NULL) {
   if (is.null(scale)) {
     scale <- ei^{-1/tail}
