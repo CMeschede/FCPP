@@ -1,3 +1,8 @@
+# data: dataframe with two columns
+# k: number of exceedances
+# u: threshold
+# type: "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
+#       "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
 thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   # input control
   if(length(dim(data)) != 2) {
@@ -38,6 +43,8 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   if(type == "mod1") {
     b[idxJ + 1] <- 1
     b <- b[1:n]
+    #'b' a dichotom vector of length n with 1 located one entry after an
+    # exceedance occurs, otherwise 0.
   } else if(type == "mod2") {
     b[idxJ] <- 1
     #'b' a dichotom vector of length n with 1 where exceedances are located
@@ -46,18 +53,14 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   a <- 1 + cumsum(b == 1)
   newJJ <- JJ[idxJ]
   firstJJ <- newJJ[1]
-  # newJJ <- newJJ[-1]
   if(type = "mod1") {
     newWW <- aggregate(WW, list(a), sum)$x[1:k]
-    # newWW <- aggregate(WW, list(a), sum)$x[2:k]
   } else if(type = "mod2") {
     newWW <- aggregate(WW, list(a), sum)$x
     if(length(newWW) == k) {
       newWW <- newWW[1:k]
-      # newWW <- newWW[1:(k-1)]
     } else if(length(newWW == (k + 1))) {
       newWW <- newWW[2:(k + 1)]
-      # newWW <- newWW[2:k]
     }
   }
   out <- tibble(newJJ = newJJ, newWW = newWW)
@@ -93,7 +96,7 @@ magnitudes <- function(data) {
   return(JJ)
 }
 
-interarrivaltime <- function(data, type) {
+interarrivaltime <- function(data, type = c("mod1", "mod2")) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
