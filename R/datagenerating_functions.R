@@ -1,4 +1,16 @@
-# Data Generation
+#' Data Generation
+#'
+#'
+#' @param n number of observations
+#' @param tail true parameter beta in (0,1]
+#' @param ei true parameter theta in (0,1]
+#' @param wait_dist distribution of waiting times
+#' @param mag_dist distribution of events/magnitudes
+#'
+#' @return
+#' @export
+#'
+#'
 data_generation <- function(n, tail = 1, ei = 1,
                             wait_dist = "stable", mag_dist = "MAR") {
   ## input control:

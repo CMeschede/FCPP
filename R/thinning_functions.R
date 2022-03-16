@@ -1,8 +1,16 @@
-# data: dataframe with two columns
-# k: number of exceedances
-# u: threshold
-# type: "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
-#       "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
+#' Thinning function
+#'
+#' @param data dataframe with two columns
+#' @param k number of exceedances
+#' @param u threshold
+#' @param type "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
+#          "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
+#'
+#' @return
+#' @export
+#'
+
+
 thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   # input control
   if(length(dim(data)) != 2) {
@@ -43,11 +51,11 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   if(type == "mod1") {
     b[idxJ + 1] <- 1
     b <- b[1:n]
-    #'b' a dichotom vector of length n with 1 located one entry after an
+    #b a dichotom vector of length n with 1 located one entry after an
     # exceedance occurs, otherwise 0.
   } else if(type == "mod2") {
     b[idxJ] <- 1
-    #'b' a dichotom vector of length n with 1 where exceedances are located
+    #b a dichotom vector of length n with 1 where exceedances are located
     # otherwise 0
   }
   a <- 1 + cumsum(b == 1)
@@ -67,6 +75,14 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   return(out)
 }
 
+#' Arrivaltime
+#'
+#' @param data dataframe with two columns
+#'
+#' @return
+#' @export
+#'
+
 arrivaltime <- function(data) {
   # input control
   if(length(dim(data)) != 2) {
@@ -82,6 +98,14 @@ arrivaltime <- function(data) {
   return(TT)
 }
 
+#' magnitudes
+#'
+#' @param data dataframe with two columns
+#'
+#' @return
+#' @export
+#'
+
 magnitudes <- function(data) {
   # input control
   if(length(dim(data)) != 2) {
@@ -95,6 +119,16 @@ magnitudes <- function(data) {
   WW <- data[, 2]
   return(JJ)
 }
+
+#' Interarrivaltime
+#'
+#' @param data dataframe with two columns
+#' @param type "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
+#          "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
+#'
+#' @return
+#' @export
+#'
 
 interarrivaltime <- function(data, type = c("mod1", "mod2")) {
   # input control
