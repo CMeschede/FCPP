@@ -53,9 +53,9 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   a <- 1 + cumsum(b == 1)
   newJJ <- JJ[idxJ]
   firstJJ <- newJJ[1]
-  if(type = "mod1") {
+  if(type == "mod1") {
     newWW <- aggregate(WW, list(a), sum)$x[1:k]
-  } else if(type = "mod2") {
+  } else if(type == "mod2") {
     newWW <- aggregate(WW, list(a), sum)$x
     if(length(newWW) == k) {
       newWW <- newWW[1:k]
