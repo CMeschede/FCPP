@@ -3,8 +3,8 @@
 #' @param data dataframe with two columns
 #' @param k number of exceedances
 #' @param u threshold
-#' @param type "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
-#          "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
+#' @param type "mod1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
+#          "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
@@ -123,8 +123,8 @@ magnitudes <- function(data) {
 #' Interarrivaltime
 #'
 #' @param data dataframe with two columns
-#' @param type "mod1" - WW[i] is the waiting time between WW[i - 1] and WW[i]
-#          "mod2" - WW[i] is the waiting time between WW[i] and WW[i + 1]
+#' @param type "mod1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
+#          "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
