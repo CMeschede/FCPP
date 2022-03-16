@@ -15,7 +15,7 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   JJ <- data[, 1]
   WW <- data[, 2]
   n <- length(JJ)
-  if(any(WW <= 0)){
+  if(any(WW <= 0)) {
     stop("the second column of 'data' should contain the waiting times being
          greater than zero")
   }
@@ -63,7 +63,7 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
       newWW <- newWW[2:(k + 1)]
     }
   }
-  out <- tibble(newJJ = newJJ, newWW = newWW)
+  out <- tibble::tibble(newJJ = newJJ, newWW = newWW)
   return(out)
 }
 
