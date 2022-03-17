@@ -18,4 +18,5 @@ Imports:
     MittagLeffleR,
     ReIns,
     tibble,
-    dplyr
+    dplyr,
+    purrr
