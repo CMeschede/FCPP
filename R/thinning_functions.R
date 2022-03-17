@@ -1,10 +1,12 @@
 #' Thinning function
 #'
-#' @param data dataframe with two columns
+#' @param data data.frame, tibble or matrix with two columns.
+#' First column are the event magnitudes and second column are the corresponding
+#' waiting times
 #' @param k number of exceedances
 #' @param u threshold
 #' @param type "mod1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
-#          "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
+#'         "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
@@ -39,12 +41,13 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
     }
   } else if(is.null(k)) {
     k <- sum(JJ > u)
-    if( k < 2) { stop("The threshold u = ", u, " is too high. There are less
-                      than two magnitudes that exceed u") }
+    if( k < 2) {
+      stop("The threshold u = ", u, " is too high. There are less
+                      than two magnitudes that exceed u")
+    }
   }
-  if (k > n) {
-    stop("Can't threshold to ", k, " exceedances if I only have ", n,
-         " observations.")
+  if(k > n) {
+    stop("Can't threshold to ", k, " exceedances if I only have ", n, " observations.")
   }
   idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) #Index of the k highest events
   b <- rep(0, times = n)
