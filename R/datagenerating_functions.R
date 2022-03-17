@@ -1,11 +1,11 @@
-#' Data Generation
+#' Data Generating Function
 #'
 #'
 #' @param n number of observations
-#' @param tail true parameter beta in (0,1]
-#' @param ei true parameter theta in (0,1]
+#' @param tail true tail parameter beta in (0,1]
+#' @param ei true parameter theta in (0,1] (extremal index)
 #' @param wait_dist distribution of waiting times
-#' @param mag_dist distribution of events/magnitudes
+#' @param mag_dist distribution of event magnitudes
 #'
 #' @return
 #' @export
@@ -76,5 +76,5 @@ data_generation <- function(n, tail = 1, ei = 1,
     n <- as.numeric(n)
     W <- MittagLeffleR::rml(n, tail = tail, scale = sigma )
   }
-  return(tibble(JJ = J, WW = W))
+  return(tibble::tibble(JJ = J, WW = W))
 }
