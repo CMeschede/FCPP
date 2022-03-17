@@ -5,15 +5,15 @@
 #' waiting times
 #' @param k number of exceedances
 #' @param u threshold
-#' @param type "mod1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
-#'         "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
+#' @param type "type1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
+#'         "type2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
 #'
 
 
-thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
+thin <- function(data, k = NULL, u = NULL, type = c("type1", "type2")) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
@@ -51,12 +51,12 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   }
   idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) #Index of the k highest events
   b <- rep(0, times = n)
-  if(type == "mod1") {
+  if(type == "type1") {
     b[idxJ + 1] <- 1
     b <- b[1:n]
     #b a dichotom vector of length n with 1 located one entry after an
     # exceedance occurs, otherwise 0.
-  } else if(type == "mod2") {
+  } else if(type == "type2") {
     b[idxJ] <- 1
     #b a dichotom vector of length n with 1 where exceedances are located
     # otherwise 0
@@ -64,9 +64,9 @@ thin <- function(data, k = NULL, u = NULL, type = c("mod1", "mod2")) {
   a <- 1 + cumsum(b == 1)
   newJJ <- JJ[idxJ]
   firstJJ <- newJJ[1]
-  if(type == "mod1") {
+  if(type == "type1") {
     newWW <- aggregate(WW, list(a), sum)$x[1:k]
-  } else if(type == "mod2") {
+  } else if(type == "type2") {
     newWW <- aggregate(WW, list(a), sum)$x
     if(length(newWW) == k) {
       newWW <- newWW[1:k]
@@ -126,14 +126,14 @@ magnitudes <- function(data) {
 #' Interarrivaltime
 #'
 #' @param data dataframe with two columns
-#' @param type "mod1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
-#          "mod2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
+#' @param type "type1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
+#          "type2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
 #'
 
-interarrivaltime <- function(data, type = c("mod1", "mod2")) {
+interarrivaltime <- function(data, type = c("type1", "type2")) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
@@ -145,9 +145,9 @@ interarrivaltime <- function(data, type = c("mod1", "mod2")) {
   JJ <- data[, 1]
   WW <- data[, 2]
   k <- length(WW)
-  if(type == "mod1") {
+  if(type == "type1") {
     WW <- WW[-1]
-  } else if(type == "mod2") {
+  } else if(type == "type2") {
     WW <- WW[-k]
   }
   return(WW)
