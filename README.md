@@ -1,7 +1,7 @@
 # FCPP
 R-Package FCPP
 
-An R-Package that includes all important function we use in our paper (not published yet).
+An R-Package that includes all important functions we use in our paper (not published yet).
 
 ## Installation of the development version on GitHub
 
