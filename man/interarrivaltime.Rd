@@ -4,12 +4,10 @@
 \alias{interarrivaltime}
 \title{Interarrivaltime}
 \usage{
-interarrivaltime(data, type = c("mod1", "mod2"))
+interarrivaltime(data)
 }
 \arguments{
 \item{data}{dataframe with two columns}
-
-\item{type}{"mod1" - WW\link{i} is the waiting time between WW\link{i - 1} and WW\link{i}}
 }
 \value{
 

@@ -4,16 +4,18 @@
 \alias{thin}
 \title{Thinning function}
 \usage{
-thin(data, k = NULL, u = NULL, type = c("mod1", "mod2"))
+thin(data, k = NULL, u = NULL)
 }
 \arguments{
-\item{data}{dataframe with two columns}
+\item{data}{data.frame, tibble or matrix with two columns.
+In the first column are the event magnitudes (JJ) stored and
+in the second column are the corresponding waiting times (WW)
+where the i-th waiting time (WW) is the time between the (i-1)-th
+and i-th event}
 
 \item{k}{number of exceedances}
 
 \item{u}{threshold}
-
-\item{type}{"mod1" - WW\link{i} is the waiting time between WW\link{i - 1} and WW\link{i}}
 }
 \value{
 
