@@ -3,7 +3,7 @@
 #' @param data data.frame, tibble or matrix with two columns.
 #' In the first column are the event magnitudes (JJ) stored and
 #' in the second column are the corresponding waiting times (WW)
-#' where the i-th waiting time (WW) is the time between the (i-1)-th
+#' where the i-th waiting time is the time between the (i-1)-th
 #' and i-th event
 #' @param k number of exceedances
 #' @param u threshold
