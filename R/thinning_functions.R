@@ -1,19 +1,19 @@
 #' Thinning function
 #'
 #' @param data data.frame, tibble or matrix with two columns.
-#' First column are the event magnitudes and second column are the corresponding
-#' waiting times
+#' In the first column are the event magnitudes (JJ) stored and
+#' in the second column are the corresponding waiting times (WW)
+#' where the i-th waiting time (WW) is the time between the (i-1)-th
+#' and i-th event
 #' @param k number of exceedances
 #' @param u threshold
-#' @param type "type1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
-#'         "type2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
 #'
 
 
-thin <- function(data, k = NULL, u = NULL, type = c("type1", "type2")) {
+thin <- function(data, k = NULL, u = NULL) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
@@ -51,29 +51,14 @@ thin <- function(data, k = NULL, u = NULL, type = c("type1", "type2")) {
   }
   idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) #Index of the k highest events
   b <- rep(0, times = n)
-  if(type == "type1") {
-    b[idxJ + 1] <- 1
-    b <- b[1:n]
-    #b a dichotom vector of length n with 1 located one entry after an
-    # exceedance occurs, otherwise 0.
-  } else if(type == "type2") {
-    b[idxJ] <- 1
-    #b a dichotom vector of length n with 1 where exceedances are located
-    # otherwise 0
-  }
+  b[idxJ + 1] <- 1
+  b <- b[1:n]
+  # b a dichotom vector of length n with 1 located one entry after an
+  # exceedance occurs, otherwise 0.
   a <- 1 + cumsum(b == 1)
   newJJ <- JJ[idxJ]
   firstJJ <- newJJ[1]
-  if(type == "type1") {
-    newWW <- aggregate(WW, list(a), sum)$x[1:k]
-  } else if(type == "type2") {
-    newWW <- aggregate(WW, list(a), sum)$x
-    if(length(newWW) == k) {
-      newWW <- newWW[1:k]
-    } else if(length(newWW == (k + 1))) {
-      newWW <- newWW[2:(k + 1)]
-    }
-  }
+  newWW <- aggregate(WW, list(a), sum)$x[1:k]
   out <- tibble::tibble(newJJ = newJJ, newWW = newWW)
   return(out)
 }
@@ -126,14 +111,12 @@ magnitudes <- function(data) {
 #' Interarrivaltime
 #'
 #' @param data dataframe with two columns
-#' @param type "type1" - WW[i] is the waiting time between JJ[i - 1] and JJ[i]
-#          "type2" - WW[i] is the waiting time between JJ[i] and JJ[i + 1]
 #'
 #' @return
 #' @export
 #'
 
-interarrivaltime <- function(data, type = c("type1", "type2")) {
+interarrivaltime <- function(data) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
@@ -145,10 +128,6 @@ interarrivaltime <- function(data, type = c("type1", "type2")) {
   JJ <- data[, 1]
   WW <- data[, 2]
   k <- length(WW)
-  if(type == "type1") {
-    WW <- WW[-1]
-  } else if(type == "type2") {
-    WW <- WW[-k]
-  }
+  WW <- WW[-1]
   return(WW)
 }
