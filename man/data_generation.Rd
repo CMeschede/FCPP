@@ -2,28 +2,28 @@
 % Please edit documentation in R/datagenerating_functions.R
 \name{data_generation}
 \alias{data_generation}
-\title{Data Generation}
+\title{Data Generating Function}
 \usage{
 data_generation(n, tail = 1, ei = 1, wait_dist = "stable", mag_dist = "MAR")
 }
 \arguments{
 \item{n}{number of observations}
 
-\item{tail}{true parameter beta in (0,1]}
+\item{tail}{true tail parameter beta in (0,1]}
 
-\item{ei}{true parameter theta in (0,1]}
+\item{ei}{true parameter theta in (0,1] (extremal index)}
 
 \item{wait_dist}{distribution of waiting times. Should be "stable",
 "ML" (Mittag-Leffler Distribution), "pareto", "exponential" or "dirac".}
 
-\item{mag_dist}{distribution of events/magnitudes}
+\item{mag_dist}{distribution of event magnitudes}
 }
 \value{
 The function returns a tibble with two columns.
 event values JJ and waiting times WW
 }
 \description{
-Data Generation
+Data Generating Function
 }
 \examples{
 dat <- data_generation(20, 0.5, 0.5)

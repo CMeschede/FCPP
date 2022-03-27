@@ -6,7 +6,7 @@ distance_cm <- function(WW, tail, ei, n) {
 }
 
 distance_cm_mod1 <- function(WW, tail, ei, n) {
-  if(is.WW.frame(WW) & length(WW) == 1) {
+  if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
   if(any(WW < 0)){
@@ -23,7 +23,7 @@ distance_cm_mod1 <- function(WW, tail, ei, n) {
 }
 
 distance_cm_mod2 <- function(WW, tail, ei, n) {
-  if(is.WW.frame(WW) & length(WW) == 1) {
+  if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
   if(any(WW < 0)) {
