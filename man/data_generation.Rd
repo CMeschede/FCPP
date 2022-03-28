@@ -13,13 +13,22 @@ data_generation(n, tail = 1, ei = 1, wait_dist = "stable", mag_dist = "MAR")
 
 \item{ei}{true parameter theta in (0,1] (extremal index)}
 
-\item{wait_dist}{distribution of waiting times}
+\item{wait_dist}{distribution of waiting times. Should be "stable",
+"ML" (Mittag-Leffler Distribution), "pareto", "exponential" or "dirac".}
 
 \item{mag_dist}{distribution of event magnitudes}
 }
 \value{
-
+The function returns a tibble with two columns.
+event values JJ and waiting times WW
 }
 \description{
 Data Generating Function
+}
+\examples{
+dat <- data_generation(20, 0.5, 0.5)
+dat
+dat2 <- data_generation(15, 0.2, 0.85, wait_dist = "pareto", mag = "MM")
+dat2
+
 }

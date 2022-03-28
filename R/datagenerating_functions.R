@@ -4,13 +4,20 @@
 #' @param n number of observations
 #' @param tail true tail parameter beta in (0,1]
 #' @param ei true parameter theta in (0,1] (extremal index)
-#' @param wait_dist distribution of waiting times
+#' @param wait_dist distribution of waiting times. Should be "stable",
+#' "ML" (Mittag-Leffler Distribution), "pareto", "exponential" or "dirac".
 #' @param mag_dist distribution of event magnitudes
 #'
 #' @return
 #' @export
 #'
-#'
+#' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' dat
+#' dat2 <- data_generation(15, 0.2, 0.85, wait_dist = "pareto", mag = "MM")
+#' dat2
+
+
 data_generation <- function(n, tail = 1, ei = 1,
                             wait_dist = "stable", mag_dist = "MAR") {
   ## input control:
