@@ -17,6 +17,13 @@
 #' @return
 #' @export
 #'
+#' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' dat
+#' thin(dat, k = 10)
+#' thin(dat, u = 1)
+#'
+
 
 
 thin <- function(data, k = NULL, u = NULL) {

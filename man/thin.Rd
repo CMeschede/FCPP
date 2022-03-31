@@ -27,3 +27,10 @@ two-column matrix.
 Alternatively, the function can also return the k
 with the largest magnitudes.
 }
+\examples{
+dat <- data_generation(20, 0.5, 0.5)
+dat
+thin(dat, k = 10)
+thin(dat, u = 1)
+
+}
