@@ -18,7 +18,9 @@ and i-th event}
 \item{u}{threshold}
 }
 \value{
-
+A tibble with two columns:
+the event values, that survived the thinning (newJJ) and
+the corresponding waiting time (newWW)
 }
 \description{
 This function returns all events that
