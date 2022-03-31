@@ -1,5 +1,11 @@
 #' Thinning function
 #'
+#' This function returns all events that
+#' exceed a specidied threshold from a tibble, a data.frame or a
+#' two-column matrix.
+#' Alternatively, the function can also return the k
+#' with the largest magnitudes.
+#'
 #' @param data data.frame, tibble or matrix with two columns.
 #' In the first column are the event magnitudes (JJ) stored and
 #' in the second column are the corresponding waiting times (WW)

@@ -10,7 +10,7 @@ thin(data, k = NULL, u = NULL)
 \item{data}{data.frame, tibble or matrix with two columns.
 In the first column are the event magnitudes (JJ) stored and
 in the second column are the corresponding waiting times (WW)
-where the i-th waiting time (WW) is the time between the (i-1)-th
+where the i-th waiting time is the time between the (i-1)-th
 and i-th event}
 
 \item{k}{number of exceedances}
@@ -21,5 +21,9 @@ and i-th event}
 
 }
 \description{
-Thinning function
+This function returns all events that
+exceed a specidied threshold from a tibble, a data.frame or a
+two-column matrix.
+Alternatively, the function can also return the k
+with the largest magnitudes.
 }
