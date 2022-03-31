@@ -81,10 +81,19 @@ thin <- function(data, k = NULL, u = NULL) {
 
 #' Arrivaltime
 #'
+#' This function transforms a tibble, a data.frame or a
+#' two-column matrix of event values and waiting times for the
+#' next event to a vector containing the total waiting times
+#' for the respective events.
+#'
 #' @param data dataframe with two columns
 #'
-#' @return
+#' @return A vector that contains the arrivaltimes
 #' @export
+#'
+#' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' arrivaltime(dat)
 #'
 
 arrivaltime <- function(data) {
