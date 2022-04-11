@@ -115,8 +115,18 @@ arrivaltime <- function(data) {
 #'
 #' @param data dataframe with two columns
 #'
-#' @return
+#' This function transforms a tibble, a data.frame or a
+#' two-column matrix of event values and waiting times for the
+#' next event to a vector containing the magnitudes
+#' for the respective events.
+#'
+#'
+#' @return A vector that contains the magnitudes
 #' @export
+#'
+#' #' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' magnitudes(dat)
 #'
 
 magnitudes <- function(data) {

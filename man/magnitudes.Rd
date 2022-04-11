@@ -7,10 +7,15 @@
 magnitudes(data)
 }
 \arguments{
-\item{data}{dataframe with two columns}
+\item{data}{dataframe with two columns
+
+This function transforms a tibble, a data.frame or a
+two-column matrix of event values and waiting times for the
+next event to a vector containing the magnitudes
+for the respective events.}
 }
 \value{
-
+A vector that contains the magnitudes
 }
 \description{
 magnitudes
