@@ -1,5 +1,11 @@
 #' Thinning function
 #'
+#' This function returns all events that
+#' exceed a specidied threshold from a tibble, a data.frame or a
+#' two-column matrix.
+#' Alternatively, the function can also return the k
+#' with the largest magnitudes.
+#'
 #' @param data data.frame, tibble or matrix with two columns.
 #' In the first column are the event magnitudes (JJ) stored and
 #' in the second column are the corresponding waiting times (WW)
@@ -9,8 +15,18 @@
 #' @param u threshold
 #'
 #' @return
+#' A tibble with two columns:
+#' the event values, that survived the thinning (newJJ) and
+#' the corresponding waiting time (newWW)
 #' @export
 #'
+#' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' dat
+#' thin(dat, k = 10)
+#' thin(dat, u = 1)
+#'
+
 
 
 thin <- function(data, k = NULL, u = NULL) {
@@ -65,10 +81,19 @@ thin <- function(data, k = NULL, u = NULL) {
 
 #' Arrivaltime
 #'
+#' This function transforms a tibble, a data.frame or a
+#' two-column matrix of event values and waiting times for the
+#' next event to a vector containing the total waiting times
+#' for the respective events.
+#'
 #' @param data dataframe with two columns
 #'
-#' @return
+#' @return A vector that contains the arrivaltimes
 #' @export
+#'
+#' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' arrivaltime(dat)
 #'
 
 arrivaltime <- function(data) {
@@ -90,8 +115,18 @@ arrivaltime <- function(data) {
 #'
 #' @param data dataframe with two columns
 #'
-#' @return
+#' This function transforms a tibble, a data.frame or a
+#' two-column matrix of event values and waiting times for the
+#' next event to a vector containing the magnitudes
+#' for the respective events.
+#'
+#'
+#' @return A vector that contains the magnitudes
 #' @export
+#'
+#' #' @examples
+#' dat <- data_generation(20, 0.5, 0.5)
+#' magnitudes(dat)
 #'
 
 magnitudes <- function(data) {

@@ -10,8 +10,16 @@ arrivaltime(data)
 \item{data}{dataframe with two columns}
 }
 \value{
-
+A vector that contains the arrivaltimes
 }
 \description{
-Arrivaltime
+This function transforms a tibble, a data.frame or a
+two-column matrix of event values and waiting times for the
+next event to a vector containing the total waiting times
+for the respective events.
+}
+\examples{
+dat <- data_generation(20, 0.5, 0.5)
+arrivaltime(dat)
+
 }
