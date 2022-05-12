@@ -2,6 +2,12 @@
 
 export(arrivaltime)
 export(data_generation)
+export(distance_cm)
+export(distance_cm_approx)
+export(distance_cm_mod1)
+export(distance_cm_mod1_approx)
+export(distance_cm_mod2)
+export(distance_cm_mod2_approx)
 export(dmixdistr)
 export(interarrivaltime)
 export(pmixdistr)
