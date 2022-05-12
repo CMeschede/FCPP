@@ -1,5 +1,6 @@
 ## minimum distance functions
 
+#' @export
 distance_cm <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
@@ -11,13 +12,13 @@ distance_cm <- function(WW, tail, ei, n) {
   k <- kstar + 1 # number of exceedances
   WW_trans <- WW * (k / n) ^ (1 / tail)
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
-  pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1 / tail))
-  pmisch <- (1 - ei) + ei * pmls # F_{beta,theta}(t_(i))
+  pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
   s <- dist + 1 / (12 * (kstar ^ 2)) + (2 / 3) * (1 - ei) ^ 3
   return(s)
 }
 
+#' @export
 distance_cm_mod1 <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
@@ -29,13 +30,13 @@ distance_cm_mod1 <- function(WW, tail, ei, n) {
   k <- kstar + 1 # number of exceedances
   WW_trans <- WW * (k / n) ^ (1 / tail)
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
-  pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1 / tail))
-  pmisch <- (1 - ei) + ei * pmls # F_{beta,theta}(t_(i))
+  pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
   s <- (dist + 1 / (12 * (kstar ^ 2)) - ((1 - ei) ^ 3) / 3) / ei
   return(s)
 }
 
+#' @export
 distance_cm_mod2 <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
@@ -51,17 +52,14 @@ distance_cm_mod2 <- function(WW, tail, ei, n) {
   if(m == 0) {
     cdf_WW_m <- 0
   } else {
-    cdf_WW_m <- 1 - ei +
-      ei * MittagLeffleR::pml(sort(WW_trans)[m],
-                              tail = tail, scale = ei ^ (-1 / tail))
+    cdf_WW_m <- pmixdistr(sort(WW_trans)[m], tail = tail, ei = ei)
   }
   if(m == kstar) {
     dist <- 0
   } else {
     WW_trunc <- WW_trans[(m + 1):kstar]
     pn_trunc <- (ppoints(n = kstar, a = 0.5))[(m + 1):kstar] # (1:kstar - 0.5)/kstar
-    pmls_trunc <-  MittagLeffleR::pml(WW_trunc, tail = tail, scale = ei ^ (-1 / tail))
-    pmisch_trunc <- (1 - ei) + ei * pmls_trunc # F_{beta,theta}(t_(i))
+    pmisch_trunc <- pmixdistr(WW_trunc, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
     dist <- sum((pn_trunc - pmisch_trunc)^2) / kstar
   }
   s <- (dist + (kstar - m) / (12 * kstar^3)
@@ -74,6 +72,7 @@ distance_cm_mod2 <- function(WW, tail, ei, n) {
 
 ## minimum distance functions approximations
 
+#' @export
 distance_cm_approx <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
@@ -91,6 +90,7 @@ distance_cm_approx <- function(WW, tail, ei, n) {
   return(s)
 }
 
+#' @export
 distance_cm_mod1_approx <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
@@ -108,6 +108,7 @@ distance_cm_mod1_approx <- function(WW, tail, ei, n) {
   return(s)
 }
 
+#' @export
 distance_cm_mod2_approx <- function(WW, tail, ei, n) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
