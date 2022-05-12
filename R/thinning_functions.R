@@ -127,7 +127,6 @@ interarrivaltime <- function(data) {
   data <- as.matrix(data)
   JJ <- data[, 1]
   WW <- data[, 2]
-  k <- length(WW)
   WW <- WW[-1]
   return(WW)
 }
