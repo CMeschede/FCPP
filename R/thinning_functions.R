@@ -105,7 +105,6 @@ arrivaltime <- function(data) {
     stop("'data' should be a matrix, tibble or data.frame with two columns ")
   }
   data <- as.matrix(data)
-  JJ <- data[, 1]
   WW <- data[, 2]
   TT <- cumsum(WW)
   return(TT)
@@ -139,13 +138,12 @@ magnitudes <- function(data) {
   }
   data <- as.matrix(data)
   JJ <- data[, 1]
-  WW <- data[, 2]
   return(JJ)
 }
 
 #' Interarrivaltime
 #'
-#' @param data dataframe with two columns
+#' @param data data frame with two columns
 #'
 #' @return
 #' @export
@@ -162,6 +160,6 @@ interarrivaltime <- function(data) {
   data <- as.matrix(data)
   JJ <- data[, 1]
   WW <- data[, 2]
-  WW <- WW[-1]
+  WW <- WW[-1] # first time excluded since it is not a time between two exceedances
   return(WW)
 }
