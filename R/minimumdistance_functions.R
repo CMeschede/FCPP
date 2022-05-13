@@ -1,7 +1,11 @@
 ## minimum distance functions
 
 #' @export
-distance_cm <- function(WW, tail, ei, n) {
+distance_cm <- function(WW, tail, ei, ptail) {
+  # WW = IETs
+  # tail = beta; tail parameter
+  # ei = theta; extremal index
+  # ptail = P(JJ > u) = k / n (number of exceedances / number of observations)
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -10,7 +14,7 @@ distance_cm <- function(WW, tail, ei, n) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail)
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
@@ -19,7 +23,7 @@ distance_cm <- function(WW, tail, ei, n) {
 }
 
 #' @export
-distance_cm_mod1 <- function(WW, tail, ei, n) {
+distance_cm_mod1 <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -28,7 +32,7 @@ distance_cm_mod1 <- function(WW, tail, ei, n) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
@@ -37,7 +41,7 @@ distance_cm_mod1 <- function(WW, tail, ei, n) {
 }
 
 #' @export
-distance_cm_mod2 <- function(WW, tail, ei, n) {
+distance_cm_mod2 <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -46,7 +50,7 @@ distance_cm_mod2 <- function(WW, tail, ei, n) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * (k / n) ^ (1 / tail) # scaled IETs
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   l <- kstar * (1 - ei)
   m <- ceiling(l) # lceil kstar*(1 - theta) rceil
   if(m == 0) {
@@ -73,7 +77,7 @@ distance_cm_mod2 <- function(WW, tail, ei, n) {
 ## minimum distance functions approximations
 
 #' @export
-distance_cm_approx <- function(WW, tail, ei, n) {
+distance_cm_approx <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -81,7 +85,7 @@ distance_cm_approx <- function(WW, tail, ei, n) {
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   pn <- (0:(k - 1)) / k
   pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1 / tail))
   pmisch <- (1 - ei) + ei * pmls
@@ -91,7 +95,7 @@ distance_cm_approx <- function(WW, tail, ei, n) {
 }
 
 #' @export
-distance_cm_mod1_approx <- function(WW, tail, ei, n) {
+distance_cm_mod1_approx <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -99,7 +103,7 @@ distance_cm_mod1_approx <- function(WW, tail, ei, n) {
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   pn <- (0:(k - 1)) / k
   pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1 / tail))
   pmisch <- (1 - ei) + ei * pmls
@@ -109,7 +113,7 @@ distance_cm_mod1_approx <- function(WW, tail, ei, n) {
 }
 
 #' @export
-distance_cm_mod2_approx <- function(WW, tail, ei, n) {
+distance_cm_mod2_approx <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -117,7 +121,7 @@ distance_cm_mod2_approx <- function(WW, tail, ei, n) {
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   pn <- (0:(k - 1)) / k
   pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1  /tail))
   weights <- diff(sort(c(0, pmls, 1), decreasing = F))
@@ -127,7 +131,7 @@ distance_cm_mod2_approx <- function(WW, tail, ei, n) {
 }
 
 # not in the article:
-distance_cm_mod3 <- function(WW, tail, ei, n) {
+distance_cm_mod3 <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
@@ -135,7 +139,7 @@ distance_cm_mod3 <- function(WW, tail, ei, n) {
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
-  WW_trans <- WW * (k / n) ^ (1 / tail)
+  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
   pn <- (0:(k - 1)) / k
   pmls <- MittagLeffleR::pml(WW_trans, tail = tail, scale = ei ^ (-1 / tail))
   pmisch <- (1 - ei) + ei * pmls
