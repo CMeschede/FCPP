@@ -1,9 +1,10 @@
 # WW - vector of inter-exceedance times
-# n - number of observations
+# ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
 # distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
-optim_multistart <- function(WW, n, distance_fct,
-                                 t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
-                                 a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
+#' @export
+optim_multistart <- function(WW, ptail, distance_fct,
+                             t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
+                             a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
   start <- tidyr::crossing(
     t = t,
     e = e
@@ -13,17 +14,15 @@ optim_multistart <- function(WW, n, distance_fct,
                          tryCatch(
                            optim( par = c(t., e.), fn = function(x) {
                              do.call(
-                               distance_fct, list(
-                                 WW = WW, tail = x[1], ei = x[2], n = n, ...
-                                 )
+                               distance_fct, list(WW = WW, tail = x[1],
+                                                  ei = x[2], ptail = ptail, ...)
                                )
                              },
                              lower = c(a_tail, a_ei), upper = c(1, 1),
                              method = method),
                            error = function(x) NA
                            )
-                         }
-                       ),
+                         }),
                        beta = purrr::map_dbl(est , ~tryCatch(.x$par[1],
                                                              error = function(x) NA )),
                        theta = purrr::map_dbl(est , ~tryCatch(.x$par[2],
@@ -37,15 +36,19 @@ optim_multistart <- function(WW, n, distance_fct,
 }
 
 # WW - vector of inter-exceedance times
-# n - number of observations
+# ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
 # distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
 # start in (0,1)^2
-optim_singlestart <- function(WW, n, distance_fct, start = c(0.55,0.55),
+#' @export
+optim_singlestart <- function(WW, ptail, distance_fct, start = NULL,
                               a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
+  if(is.null(start)) {
+    start <- c((1 + a_tail) / 2, (1 + a_ei) / 2)
+  }
   est <- tryCatch(
-    optim( par = c(0.55,0.55), fn = function(x) {
+    optim( par = start, fn = function(x) {
       do.call(
-        distance_fct, list(WW = WW, tail = x[1], ei = x[2], n = n, ...)
+        distance_fct, list(WW = WW, tail = x[1], ei = x[2], ptail = ptail, ...)
         )
       },
       lower = c(a_tail, a_ei), upper = c(1, 1), method = method)$par,
