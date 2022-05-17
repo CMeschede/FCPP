@@ -7,7 +7,7 @@
 interarrivaltime(data)
 }
 \arguments{
-\item{data}{dataframe with two columns}
+\item{data}{data frame with two columns}
 }
 \value{
 

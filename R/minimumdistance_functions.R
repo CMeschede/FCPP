@@ -66,10 +66,11 @@ distance_cm_mod2 <- function(WW, tail, ei, ptail) {
     pmisch_trunc <- pmixdistr(WW_trunc, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
     dist <- sum((pn_trunc - pmisch_trunc)^2) / kstar
   }
-  s <- (dist + (kstar - m) / (12 * kstar^3)
-        - (l ^ 3 - m ^ 3) / (3 * kstar ^ 3)
+  s <- (dist
+        + (kstar - m) / (12 * (kstar ^ 3))
+        - (l ^ 3 - m ^ 3) / (3 * (kstar ^ 3))
         + (l ^ 2 - m ^ 2) / (kstar ^ 2) * cdf_WW_m
-        - (l - m) / kstar * (cdf_WW_m ^ 2) )  / (ei ^ 3)
+        - (l - m) / kstar * (cdf_WW_m ^ 2)) / (ei ^ 3)
   return(s)
 }
 
