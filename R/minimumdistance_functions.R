@@ -53,25 +53,29 @@ distance_cm_mod2 <- function(WW, tail, ei, ptail) {
   WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F) # scaled IETs
   l <- kstar * (1 - ei)
   m <- ceiling(l) # lceil kstar*(1 - theta) rceil
-  if(m == 0) {
-    cdf_WW_m <- 0
-  } else {
-    cdf_WW_m <- pmixdistr(WW_trans[m], tail = tail, ei = ei)
+  if(m = kstar) {
+    pml_maxWW <- MittagLeffleR::pml(max(WW_trans),
+                                    tail = tail, scale = ei ^ (-1  /tail))
+    s <- 1/3 - pml_maxWW + pml_maxWW^2
+    return(s)
   }
-  if(m == kstar) {
-    dist <- 0
-  } else {
+  if(m < kstar) {
+    if(m == 0) {
+      cdf_WW_m <- 0
+    } else {
+      cdf_WW_m <- pmixdistr(WW_trans[m], tail = tail, ei = ei)
+    }
     WW_trunc <- WW_trans[(m + 1):kstar]
     pn_trunc <- (ppoints(n = kstar, a = 0.5))[(m + 1):kstar] # (1:kstar - 0.5)/kstar
     pmisch_trunc <- pmixdistr(WW_trunc, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
     dist <- sum((pn_trunc - pmisch_trunc)^2) / kstar
+    s <- (dist
+          + (kstar - m) / (12 * (kstar ^ 3))
+          - (l ^ 3 - m ^ 3) / (3 * (kstar ^ 3))
+          + (l ^ 2 - m ^ 2) / (kstar ^ 2) * cdf_WW_m
+          - (l - m) / kstar * (cdf_WW_m ^ 2)) / (ei ^ 3)
+    return(s)
   }
-  s <- (dist
-        + (kstar - m) / (12 * (kstar ^ 3))
-        - (l ^ 3 - m ^ 3) / (3 * (kstar ^ 3))
-        + (l ^ 2 - m ^ 2) / (kstar ^ 2) * cdf_WW_m
-        - (l - m) / kstar * (cdf_WW_m ^ 2)) / (ei ^ 3)
-  return(s)
 }
 
 
