@@ -14,7 +14,7 @@ distance_cm <- function(WW, tail, ei, ptail) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * ptail ^ (1 / tail)
+  WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F)
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
@@ -32,7 +32,7 @@ distance_cm_mod1 <- function(WW, tail, ei, ptail) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
+  WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F) # scaled IETs
   pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
@@ -50,13 +50,13 @@ distance_cm_mod2 <- function(WW, tail, ei, ptail) {
   }
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
-  WW_trans <- WW * ptail ^ (1 / tail) # scaled IETs
+  WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F) # scaled IETs
   l <- kstar * (1 - ei)
   m <- ceiling(l) # lceil kstar*(1 - theta) rceil
   if(m == 0) {
     cdf_WW_m <- 0
   } else {
-    cdf_WW_m <- pmixdistr(sort(WW_trans)[m], tail = tail, ei = ei)
+    cdf_WW_m <- pmixdistr(WW_trans[m], tail = tail, ei = ei)
   }
   if(m == kstar) {
     dist <- 0
