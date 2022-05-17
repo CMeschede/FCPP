@@ -53,7 +53,7 @@ distance_cm_mod2 <- function(WW, tail, ei, ptail) {
   WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F) # scaled IETs
   l <- kstar * (1 - ei)
   m <- ceiling(l) # lceil kstar*(1 - theta) rceil
-  if(m = kstar) {
+  if(m == kstar) {
     pml_maxWW <- MittagLeffleR::pml(max(WW_trans),
                                     tail = tail, scale = ei ^ (-1  /tail))
     s <- 1/3 - pml_maxWW + pml_maxWW^2
