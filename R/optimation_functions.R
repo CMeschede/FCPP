@@ -23,11 +23,11 @@ optim_multistart <- function(WW, ptail, distance_fct,
                            error = function(x) NA
                            )
                          }),
-                       beta = purrr::map_dbl(est , ~tryCatch(.x$par[1],
+                       beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
                                                              error = function(x) NA )),
-                       theta = purrr::map_dbl(est , ~tryCatch(.x$par[2],
+                       theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
                                                               error = function(x) NA )),
-                       value = purrr::map_dbl(est , ~tryCatch(.x$value,
+                       value = purrr::map_dbl(opt, ~tryCatch(.x$value,
                                                               error = function(x) NA ))
   )
   est <- dplyr::select(est, -opt)
@@ -46,7 +46,7 @@ optim_singlestart <- function(WW, ptail, distance_fct, start = NULL,
     start <- c((1 + a_tail) / 2, (1 + a_ei) / 2)
   }
   est <- tryCatch(
-    optim( par = start, fn = function(x) {
+    optim(par = start, fn = function(x) {
       do.call(
         distance_fct, list(WW = WW, tail = x[1], ei = x[2], ptail = ptail, ...)
         )
