@@ -78,6 +78,26 @@ distance_cm_mod2 <- function(WW, tail, ei, ptail) {
   }
 }
 
+# not in the article:
+distance_cm_mod3 <- function(WW, tail, ei, ptail) {
+  if(is.data.frame(WW) & length(WW) == 1) {
+    WW <- dplyr::pull(WW)
+  }
+  if(any(WW <= 0)){
+    stop("WW (waiting times) should be positive values")
+  }
+  kstar <- length(WW) # number of IETs
+  k <- kstar + 1 # number of exceedances
+  WW_trans <- sort(WW * ptail ^ (1 / tail), decreasing = F) # scaled IETs
+  pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
+  pmisch <- pmixdistr(WW_trans, tail = tail, ei = ei) # F_{beta,theta}(t_(i))
+  dist <- mean((pn - pmisch) ^ 2)
+  s <- (dist + 1 / (12 * (kstar ^ 2)) - ((1 - ei) ^ 3) / 3) /
+    ((0.5 - 1 / 3 * ei) * ei ^ 2)
+  s <- (1 / ((0.5 - 1 / 3 * ei) * ei)) *
+    sum((((sort(c(1 - ei, pmisch)) - pn) ^ 2) * weights))
+  return(s)
+}
 
 ## minimum distance functions approximations
 
@@ -136,7 +156,7 @@ distance_cm_mod2_approx <- function(WW, tail, ei, ptail) {
 }
 
 # not in the article:
-distance_cm_mod3 <- function(WW, tail, ei, ptail) {
+distance_cm_mod3_approx <- function(WW, tail, ei, ptail) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
