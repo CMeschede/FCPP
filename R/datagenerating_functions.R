@@ -1,6 +1,10 @@
 #' Data Generating Function
 #'
+#' Function that generates a marked point process (JJ[i], WW[i])[i = 1,...,n].
+#' The JJ[i] is the i-th mark and WW[i] is the waiting time between the i-1- and
+#' i-th event.
 #'
+#' Details are coming soon...
 #' @param n number of observations
 #' @param tail true tail parameter beta in (0,1]
 #' @param ei true parameter theta in (0,1] (extremal index)
@@ -18,7 +22,7 @@
 #' dat2
 
 
-data_generation <- function(n, tail = 1, ei = 1,
+data_generation <- function(n, tail = 1, ei = 1, stability = NULL,
                             wait_dist = "stable", mag_dist = "MAR") {
   ## input control:
   # 'n' number of observations
@@ -37,10 +41,32 @@ data_generation <- function(n, tail = 1, ei = 1,
          exponential , dirac.")
   # 'wait_dist' distribution of waiting times
   if((wait_dist %in% c("exponential", "dirac") & tail < 1) ||
-     (wait_dist %in% c("stable", "ML", "pareto") & tail == 1))
+     (wait_dist %in% c("stable", "ML") & tail == 1))
     stop("if tail = 1, wait_dist should be one of the following characters:
-         exponential, dirac. if tail < 1, wait_dist schould be one of the
-         following characters: stable , ML , pareto.")
+         exponential , dirac , pareto with stability parameter larger than 1.
+         If tail < 1, wait_dist schould be one of the following characters:
+         stable , ML , pareto with stability parameter equals the tail parameter.")
+  # 'stability'/ true stability parameter alpha > 0
+  if(is.null(stability)) {
+    stability <- tail
+  } else {
+  if(stability <= 0 || length(stability) != 1)
+    stop("Stability parameter should be a single positiv value. For stability < 1
+         it should hold stability  = tail")
+  if(tail < 1 & tail != stability) {
+    stability <- tail
+    warning(paste("For tail lower one, tail and stability should be identical.
+                  That is why the stability parameter is set to stability = ",
+                  tail, sep = ""))
+  }
+  if(!(wait_dist == "pareto") & stability > 1)
+    stop("A stability parameter larger than 1 is only implemented within the use
+         of Pareto distributed waiting times")
+  }
+  if(wait_dist == "pareto" & stability == 1)
+    stop("The special case of pareto waiting times with stability parameter equals
+         one is unfortunately not implemented, yet.
+         Please, choose a stability parameter smaller or larger than one")
   # 'mag_dist' distribution of events/magnitudes
   if(! (mag_dist %in% c("MAR","MM")) || length(mag_dist) != 1 )
     stop("mag_dist should be one of following characters: MAR , MM.")
@@ -74,10 +100,12 @@ data_generation <- function(n, tail = 1, ei = 1,
     W <- rep(1, n)
   } else if(wait_dist == "stable") { # stable
     sigma <- (cos(pi * tail / 2)) ^ (1 / tail)
-    W <- stabledist::rstable(n, alpha = tail, beta = 1 , gamma = sigma, delta = 0, pm = 1)
+    W <- stabledist::rstable(n, alpha = tail, beta = 1 , gamma = sigma,
+                             delta = 0, pm = 1)
   } else if(wait_dist == "pareto") { # pareto
-    sigma <- (1 / gamma(1 - tail)) ^ (1 / tail)
-    W <- ReIns::rpareto(n, shape = tail, scale = sigma)
+    if(tail < 1) {sigma <- (1 / gamma(1 - tail)) ^ (1 / tail)}
+    if(tail == 1) {sigma <- (stability - 1) / stability}
+    W <- ReIns::rpareto(n, shape = stability, scale = sigma)
   } else if(wait_dist == "ML") { # Mittag-Leffler
     sigma <- 1
     n <- as.numeric(n)
