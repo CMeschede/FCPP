@@ -8,13 +8,13 @@
 \alias{dmixdistr}
 \title{Distribution functions and random number generation}
 \usage{
-rmixdistr(n, tail, ei, scale = NULL)
+rmixdistr(n, tail, ei, scale = 1)
 
-pmixdistr(q, tail, ei, scale = NULL)
+pmixdistr(q, tail, ei, scale = 1, lower.tail = TRUE)
 
-qmixdistr(p, tail, ei, scale = NULL)
+qmixdistr(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
-dmixdistr(x, tail, ei, scale = NULL)
+dmixdistr(x, tail, ei, scale = 1, log.p = FALSE)
 }
 \arguments{
 \item{n}{number of observations.}
@@ -25,7 +25,12 @@ dmixdistr(x, tail, ei, scale = NULL)
 
 \item{scale}{scale parameter, default NULL sets scale = ei ^ (-1 / tail)}
 
+\item{lower.tail}{logical; if TRUE, probabilities are \eqn{P(X\leq x)},
+otherwise, \eqn{P(X>x)}.}
+
 \item{p}{vector of probabilities.}
+
+\item{log.p}{logical; if \code{TRUE}, probabilitied \eqn{p} are given as \eqn{\log(p)}}
 
 \item{x, q}{vector of quantiles.}
 }
@@ -41,7 +46,20 @@ random variate generation for a mixture distribuion with the Dirac measure at
 point zero and the Mittag-Leffler distribution as components.
 }
 \details{
-Now the details are coming... coming soon.
+The mixed distribution is a mixture of da Dirac measure
+in 0 and a Mittag-Leffler distribution with tail parameter
+\eqn{\beta} and a scale parameter. A Mittag-Leffler
+distributed random variable \eqn{Z_{\beta}} with parameter
+\eqn{\beta\in(0,1]} can be defined on the positive real numbers
+by its Laplace transform
+\deqn{\mathcal{L}_{Z_{\beta}}(s)=\frac{1}{1+s^\beta}_.}
+The mixed distribtion has the c.d.f
+\deqn{F_{\beta,\theta,\sigma_k}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
++\theta\cdot F^*_{\beta,\theta,\sigma_k}(x)},
+where \eqn{F^*_{\beta,\theta,\sigma_k}} is the c.d.f
+of the Mittag-Leffler distribution.
+If \code{scale} is not specified, it assumes the default value
+of \eqn{\theta^{-1/\beta}}.
 }
 \examples{
 rmixdistr(n = 10, tail = 0.8, ei = 0.5)
