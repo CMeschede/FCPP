@@ -45,32 +45,35 @@
 #' @export
 
 
-rmixdistr <- function(n, tail, ei, scale = 1) {
+rmixdistr <- function(n, tail, ei, scale = NULL) {
   stopifnot(as.integer(n) == n, tail > 0, tail < 1, ei >0, ei < 1, scale > 0)
-  scale1 <- ei ^ (-1 / tail) * scale
-  if (tail == 1) {
-    r <- ifelse(runif(n) > ei, 0, rexp(n, rate = 1 / scale1))
-  } else{
-    r <- ifelse(runif(n) > ei, 0,
-                MittagLeffleR::rml(n, tail = tail, scale = scale1)
-    )
+  if (is.null(scale)) {
+    scale <- ei ^ (-1 / tail)
   }
+  if (tail == 1) {
+    r <- ifelse(runif(n) > ei, 0, rexp(n, rate = 1 / scale))
+  } else{
+    r <- ifelse(runif(n) > ei, 0, MittagLeffleR::rml(n , tail = tail,
+                                                     scale = scale ))
+    }
   return(r)
 }
 
 #' @rdname mixdistr
 #' @export
-pmixdistr <-  function(q, tail, ei, scale = 1, lower.tail = TRUE) {
+pmixdistr <-  function(q, tail, ei, scale = NULL, lower.tail = TRUE) {
   stopifnot(tail > 0, tail < 1, ei >0, ei < 1, scale > 0)
-  scale1 <- ei ^ (-1 / tail) * scale
+  if (is.null(scale)) {
+    scale <- ei ^ (-1 / tail)
+  }
   if (tail == 1) {
-    p <- 1 - ei + ei * pexp(q, rate = 1 / scale1)
+    p <- 1 - ei + ei * pexp(q, rate = 1 / scale)
     p[q < 0] <- 0
   } else {
     p <- numeric(0)
     if (length(q[q >= 0]) > 0) {
       p[q >= 0] <- 1 - ei + ei * MittagLeffleR::pml(q[q >= 0], tail = tail,
-                                                    scale = scale1)
+                                                    scale = scale)
     }
     p[q < 0] <- 0
   }
@@ -85,9 +88,11 @@ pmixdistr <-  function(q, tail, ei, scale = 1, lower.tail = TRUE) {
 
 #' @rdname mixdistr
 #' @export
-qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE) {
+qmixdistr <-  function(p, tail, ei, scale = NULL, lower.tail = TRUE, log.p = FALSE) {
   stopifnot(p >= 0, p <= 1, tail > 0, tail < 1, ei >0, ei < 1, scale > 0)
-  scale1 <- ei ^ (-1 / tail) * scale
+  if (is.null(scale)) {
+    scale <- ei ^ (-1 / tail)
+  }
   if(!lower.tail){
     p <- 1 - p
   }
@@ -96,13 +101,13 @@ qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
   }
   if (tail == 1) {
     p[p < (1 - ei)] <- 1 - ei
-    q <- qexp((p - (1 - ei)) / ei, rate = 1 / scale1)
+    q <- qexp((p - (1 - ei)) / ei, rate = 1 / scale)
   } else {
     q <- numeric(length(p))
     if ( any(p > (1 - ei)) ) {
-      q[p > (1 - ei) & p < 1] <- MittagLeffleR::qml((p[p > (1 - ei) & p < 1] - (1 - ei)) / ei,
-                                                    tail = tail, scale = scale1)
-    }
+      q[p > (1 - ei) & p < 1] <- MittagLeffleR::qml((p[p > (1 - ei) & p < 1] -
+                                                       (1 - ei)) / ei ,
+                                                    tail = tail, scale = scale)}
     q[p == 1] <- Inf
   }
   return(q)
@@ -110,16 +115,18 @@ qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
 #' @rdname mixdistr
 #' @export
-dmixdistr <- function(x, tail, ei, scale = 1, log.p = FALSE) {
+dmixdistr <- function(x, tail, ei, scale = NULL, log.p = FALSE) {
   stopifnot(tail > 0, tail < 1, ei >0, ei < 1, scale > 0)
-  scale1 <- ei^{-1/tail} * scale
-  if(tail == 1) {
-    d <- ei * dexp(x , rate = 1 / scale1)
-    d[x == 0] <- 1 - ei
+  if (is.null(scale)) {
+    scale <- ei^{-1/tail}
+  }
+  if(tail == 1){
+    d <- ei * dexp(x , rate = 1/scale)
+    d[x==0] <- 1-ei
   } else {
     d <- numeric(length(x))
     if(any(x > 0)) {
-      d[x > 0] <- ei * MittagLeffleR::dml(x[x > 0], tail = tail, scale = scale1)
+      d[x > 0] <- ei * MittagLeffleR::dml(x[x > 0], tail = tail, scale = scale)
     }
     d[x == 0] <- 1 - ei
   }

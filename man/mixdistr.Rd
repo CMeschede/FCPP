@@ -8,13 +8,13 @@
 \alias{dmixdistr}
 \title{Distribution functions and random number generation}
 \usage{
-rmixdistr(n, tail, ei, scale = 1)
+rmixdistr(n, tail, ei, scale = NULL)
 
-pmixdistr(q, tail, ei, scale = 1, lower.tail = TRUE)
+pmixdistr(q, tail, ei, scale = NULL, lower.tail = TRUE)
 
-qmixdistr(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
+qmixdistr(p, tail, ei, scale = NULL, lower.tail = TRUE, log.p = FALSE)
 
-dmixdistr(x, tail, ei, scale = 1, log.p = FALSE)
+dmixdistr(x, tail, ei, scale = NULL, log.p = FALSE)
 }
 \arguments{
 \item{n}{number of observations.}
