@@ -8,11 +8,11 @@
 \alias{dmixdistr}
 \title{Distribution functions and random number generation}
 \usage{
-rmixdistr(n, tail, ei, scale = NULL)
+rmixdistr(n, tail, ei, scale = 1)
 
-pmixdistr(q, tail, ei, scale = NULL, lower.tail = TRUE)
+pmixdistr(q, tail, ei, scale = 1, lower.tail = TRUE)
 
-qmixdistr(p, tail, ei, scale = NULL, lower.tail = TRUE, log.p = FALSE)
+qmixdistr(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
 dmixdistr(x, tail, ei, scale = NULL, log.p = FALSE)
 }
@@ -48,18 +48,18 @@ point zero and the Mittag-Leffler distribution as components.
 \details{
 The mixed distribution is a mixture of da Dirac measure
 in 0 and a Mittag-Leffler distribution with tail parameter
-\eqn{\beta} and a scale parameter. A Mittag-Leffler
+\eqn{\beta} and a scale parameter \eqn{\sigma}. A Mittag-Leffler \eqn{ML(\beta,\sigma)}
 distributed random variable \eqn{Z_{\beta}} with parameter
-\eqn{\beta\in(0,1]} can be defined on the positive real numbers
+\eqn{\beta\in(0,1]} and \eqn{\sigma=1} can be defined on the positive real numbers
 by its Laplace transform
 \deqn{\mathcal{L}_{Z_{\beta}}(s)=\frac{1}{1+s^\beta}_.}
-The mixed distribtion has the c.d.f
-\deqn{F_{\beta,\theta,\sigma_k}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
-+\theta\cdot F^*_{\beta,\theta,\sigma_k}(x)},
-where \eqn{F^*_{\beta,\theta,\sigma_k}} is the c.d.f
-of the Mittag-Leffler distribution.
-If \code{scale} is not specified, it assumes the default value
-of \eqn{\theta^{-1/\beta}}.
+For an arbitrary \eqn{\sigma>0} write \eqn{\sigma Z_\beta}.
+The mixed distribution has the c.d.f
+\deqn{F_{\beta,\theta,\sigma^*}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
++\theta\cdot F^*_{\beta,\theta,\sigma^*}(x),}
+where \eqn{F^*_{\beta,\theta,\sigma^*}} is the c.d.f
+of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma^*)} distribution,
+where \eqn{\sigma^*} corresponds to the input \code{scale}.
 }
 \examples{
 rmixdistr(n = 10, tail = 0.8, ei = 0.5)
