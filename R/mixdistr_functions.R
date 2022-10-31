@@ -11,7 +11,8 @@
 #' @param x,q vector of quantiles.
 #' @param tail tail parameter
 #' @param ei extremal index / the weighting
-#' @param scale scale parameter, default NULL sets scale = ei ^ (-1 / tail)
+#' @param scale scale parameter (default \code{scale = 1}) sets sigma^* = ei ^ (-1 / tail) * scale, 
+#'  where sigma^* is the scale parameter of the Mittag-Leffler distribution 
 #' @param log.p logical; if \code{TRUE}, probabilitied \eqn{p} are given as \eqn{\log(p)}
 #' @param lower.tail logical; if TRUE, probabilities are \eqn{P(X\leq x)},
 #'  otherwise, \eqn{P(X>x)}.
@@ -25,10 +26,10 @@
 #' \deqn{\mathcal{L}_{Z_{\beta}}(s)=\frac{1}{1+s^\beta}_.}
 #' For an arbitrary \eqn{\sigma>0} write \eqn{\sigma Z_\beta}.
 #' The mixed distribution has the c.d.f
-#' \deqn{F_{\beta,\theta,\sigma^*}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
-#' +\theta\cdot F^*_{\beta,\theta,\sigma^*}(x),}
-#' where \eqn{F^*_{\beta,\theta,\sigma^*}} is the c.d.f
-#' of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma^*)} distribution,
+#' \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
+#' +\theta\cdot F^*_{\beta,\sigma^*}(x),}
+#' where \eqn{F^*_{\beta,\sigma^*}} is the c.d.f
+#' of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma)} distribution,
 #' where \eqn{\sigma^*} corresponds to the input \code{scale}.
 #'
 #'
