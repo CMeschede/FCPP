@@ -9,9 +9,9 @@
 #' @param n number of observations.
 #' @param p vector of probabilities.
 #' @param x,q vector of quantiles.
-#' @param tail tail parameter
-#' @param ei extremal index / the weighting
-#' @param scale scale parameter (default \code{scale = 1}) sets sigma^* = ei ^ (-1 / tail) * scale, 
+#' @param tail tail parameter \eqn{\beta}
+#' @param ei extremal index / the weighting \eqn{\theta}
+#' @param scale scale parameter \eqn{\sigma} (default \code{scale = 1}) sets \eqn{sigma^* = ei ^ (-1 / tail) * \sigma}, 
 #'  where sigma^* is the scale parameter of the Mittag-Leffler distribution 
 #' @param log.p logical; if \code{TRUE}, probabilitied \eqn{p} are given as \eqn{\log(p)}
 #' @param lower.tail logical; if TRUE, probabilities are \eqn{P(X\leq x)},
@@ -112,8 +112,8 @@ qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
 #' @rdname mixdistr
 #' @export
-dmixdistr <- function(x, tail, ei, scale = NULL, log.p = FALSE) {
-  stopifnot(tail > 0, tail <= 1, ei >0, ei <= 1, scale > 0)
+dmixdistr <- function(x, tail, ei, scale = 1, log.p = FALSE) {
+  stopifnot(tail > 0, tail <= 1, ei > 0, ei <= 1, scale > 0)
   scale1 <- ei^{-1/tail} * scale
   if(tail == 1) {
     d <- ei * dexp(x , rate = 1 / scale1)
