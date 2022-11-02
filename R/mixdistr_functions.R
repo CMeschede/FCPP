@@ -98,13 +98,13 @@ qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
   }
   if (tail == 1) {
     p[p < (1 - ei)] <- 1 - ei
-    q <- stats::qexp((p - (1 - ei)) / ei, rate = 1 / scale)
+    q <- stats::qexp((p - (1 - ei)) / ei, rate = 1 / scale1)
   } else {
     q <- numeric(length(p))
     if ( any(p > (1 - ei)) ) {
       q[p > (1 - ei) & p < 1] <- MittagLeffleR::qml((p[p > (1 - ei) & p < 1] -
                                                        (1 - ei)) / ei ,
-                                                    tail = tail, scale = scale)}
+                                                    tail = tail, scale = scale1)}
     q[p == 1] <- Inf
   }
   return(q)
