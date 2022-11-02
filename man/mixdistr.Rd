@@ -10,27 +10,28 @@
 \usage{
 rmixdistr(n, tail, ei, scale = 1)
 
-pmixdistr(q, tail, ei, scale = 1, lower.tail = TRUE)
+pmixdistr(q, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
 qmixdistr(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
 
-dmixdistr(x, tail, ei, scale = NULL, log.p = FALSE)
+dmixdistr(x, tail, ei, scale = 1, log.p = FALSE)
 }
 \arguments{
 \item{n}{number of observations.}
 
-\item{tail}{tail parameter}
+\item{tail}{tail parameter \eqn{\beta}}
 
-\item{ei}{extremal index / the weighting}
+\item{ei}{extremal index / the weighting \eqn{\theta}}
 
-\item{scale}{scale parameter, default NULL sets scale = ei ^ (-1 / tail)}
+\item{scale}{scale parameter \eqn{\sigma} (default \code{scale = 1}) sets \eqn{sigma^\star = ei ^ (-1 / tail) * \sigma},
+where sigma^* is the scale parameter of the Mittag-Leffler distribution}
 
-\item{lower.tail}{logical; if TRUE, probabilities are \eqn{P(X\leq x)},
+\item{lower.tail}{logical; if TRUE, probabilities are \eqn{P(X \le x)},
 otherwise, \eqn{P(X>x)}.}
 
-\item{p}{vector of probabilities.}
+\item{log.p}{logical; if \code{TRUE}, probabilitied \eqn{p} are given as log(p)}
 
-\item{log.p}{logical; if \code{TRUE}, probabilitied \eqn{p} are given as \eqn{\log(p)}}
+\item{p}{vector of probabilities.}
 
 \item{x, q}{vector of quantiles.}
 }
@@ -55,11 +56,11 @@ by its Laplace transform
 \deqn{\mathcal{L}_{Z_{\beta}}(s)=\frac{1}{1+s^\beta}_.}
 For an arbitrary \eqn{\sigma>0} write \eqn{\sigma Z_\beta}.
 The mixed distribution has the c.d.f
-\deqn{F_{\beta,\theta,\sigma^*}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
-+\theta\cdot F^*_{\beta,\theta,\sigma^*}(x),}
-where \eqn{F^*_{\beta,\theta,\sigma^*}} is the c.d.f
-of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma^*)} distribution,
-where \eqn{\sigma^*} corresponds to the input \code{scale}.
+\deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
++\theta\cdot F^\star_{\beta,\sigma^\star}(x),}
+where \eqn{F^\star_{\beta,\sigma^\star}} is the c.d.f
+of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma)} distribution,
+where \eqn{\sigma^\star} corresponds to the input \code{scale}.
 }
 \examples{
 rmixdistr(n = 10, tail = 0.8, ei = 0.5)

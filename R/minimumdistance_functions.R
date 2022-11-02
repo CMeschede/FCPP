@@ -15,7 +15,7 @@ distance_cm <- function(WW, tail, ei, scale = 1) {
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
   WW_sort <- sort(WW, decreasing = F)
-  pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
+  pn <- stats::ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_sort, tail = tail, ei = ei, scale = scale) # F_{beta,theta, sigma}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
   s <- dist + 1 / (12 * (kstar ^ 2)) + (2 / 3) * (1 - ei) ^ 3
@@ -33,7 +33,7 @@ distance_cm_mod1 <- function(WW, tail, ei, scale = 1) {
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
   WW_sort <- sort(WW, decreasing = F) # IETs
-  pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
+  pn <- stats::ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_sort, tail = tail, ei = ei, scale = scale) # F_{beta,theta, sigma}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
   s <- (dist + 1 / (12 * (kstar ^ 2)) - ((1 - ei) ^ 3) / 3) / ei
@@ -66,7 +66,7 @@ distance_cm_mod2 <- function(WW, tail, ei, scale = 1) {
       cdf_WW_m <- pmixdistr(WW_sort[m], tail = tail, ei = ei, scale = scale)
     }
     WW_trunc <- WW_sort[(m + 1):kstar]
-    pn_trunc <- (ppoints(n = kstar, a = 0.5))[(m + 1):kstar] # (1:kstar - 0.5)/kstar
+    pn_trunc <- (stats::ppoints(n = kstar, a = 0.5))[(m + 1):kstar] # (1:kstar - 0.5)/kstar
     pmisch_trunc <- pmixdistr(WW_trunc, tail = tail, ei = ei, scale = scale) # F_{beta,theta}(t_(i))
     dist <- sum((pn_trunc - pmisch_trunc) ^ 2) / kstar
     s <- (dist
@@ -89,7 +89,7 @@ distance_cm_mod3 <- function(WW, tail, ei, scale = 1) {
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
   WW_sort <- sort(WW, decreasing = F) # scaled IETs
-  pn <- ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
+  pn <- stats::ppoints(n = kstar, a = 0.5) # (1:kstar - 0.5)/kstar
   pmisch <- pmixdistr(WW_sort, tail = tail, ei = ei, scale = scale) # F_{beta,theta}(t_(i))
   dist <- mean((pn - pmisch) ^ 2)
   s <- (dist + 1 / (12 * (kstar ^ 2)) - ((1 - ei) ^ 3) / 3) /

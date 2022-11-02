@@ -19,4 +19,6 @@ Imports:
     ReIns,
     tibble,
     dplyr,
-    purrr
+    purrr,
+    tidyr,
+    stats

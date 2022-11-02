@@ -24,9 +24,9 @@ the corresponding waiting time (newWW)
 }
 \description{
 This function returns all events that
-exceed a specidied threshold from a tibble, a data.frame or a
+exceed a specified threshold from a tibble, a data.frame or a
 two-column matrix.
-Alternatively, the function can also return the k
+Alternatively, the function can also return the k observations
 with the largest magnitudes.
 }
 \examples{

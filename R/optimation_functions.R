@@ -15,7 +15,7 @@ optim_multistart_bt <- function(WW, distance_fct, ptail, rho,
   est <- dplyr::mutate(start,
                        opt = purrr::pmap(list(t, e), function(t., e.) {
                          tryCatch(
-                           optim( par = c(t., e.), fn = function(x) {
+                           stats::optim( par = c(t., e.), fn = function(x) {
                              do.call(
                                distance_fct, list(WW = WW, tail = x[1], ei = x[2],
                                                   scale = ptail ^ {-1 / x[1]} * rho)
@@ -75,7 +75,7 @@ optim_multistart_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
   est <- dplyr::mutate(start,
                        opt = purrr::pmap(list(t, e, r), function(t., e., r.) {
                          tryCatch(
-                           optim( par = c(t., e., r.), fn = function(x) {
+                           stats::optim( par = c(t., e., r.), fn = function(x) {
                              do.call(
                                distance_fct, list(WW = WW, tail = x[1], ei = x[2],
                                                   scale = ptail ^ {-1 / x[1]} * x[3])
@@ -120,7 +120,7 @@ optim_multistart_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
     est <- dplyr::mutate(start,
                          opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
                            tryCatch(
-                             optim( par = c(t., e., s.), fn = function(x) {
+                             stats::optim( par = c(t., e., s.), fn = function(x) {
                                do.call(
                                  distance_fct, list(WW = WW, tail = x[1], ei = x[2], scale = x[3])
                                )
@@ -158,7 +158,7 @@ optim_singlestart <- function(WW, ptail, distance_fct, start = NULL,
     start <- c((1 + a_tail) / 2, (1 + a_ei) / 2)
   }
   est <- tryCatch(
-    optim(par = start, fn = function(x) {
+    stats::optim(par = start, fn = function(x) {
       do.call(
         distance_fct, list(WW = WW, tail = x[1], ei = x[2], ptail = ptail, ...)
         )

@@ -74,7 +74,7 @@ thin <- function(data, k = NULL, u = NULL) {
   a <- 1 + cumsum(b == 1)
   newJJ <- JJ[idxJ]
   firstJJ <- newJJ[1]
-  newWW <- aggregate(WW, list(a), sum)$x[1:k]
+  newWW <- stats::aggregate(WW, list(a), sum)$x[1:k]
   out <- tibble::tibble(newJJ = newJJ, newWW = newWW)
   return(out)
 }

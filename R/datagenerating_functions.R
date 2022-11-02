@@ -127,7 +127,7 @@ if(wait_dist == "stable") { # stable
        W <- MittagLeffleR::rml(n, tail = tail, scale = sigma )
      }
      if(stability == 1){
-       W <- rexp(n, rate = 1)
+       W <- stats::rexp(n, rate = 1)
      }
   }
   return(tibble::tibble(JJ = J, WW = W))

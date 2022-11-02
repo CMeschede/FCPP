@@ -11,10 +11,10 @@
 #' @param x,q vector of quantiles.
 #' @param tail tail parameter \eqn{\beta}
 #' @param ei extremal index / the weighting \eqn{\theta}
-#' @param scale scale parameter \eqn{\sigma} (default \code{scale = 1}) sets \eqn{sigma^* = ei ^ (-1 / tail) * \sigma}, 
-#'  where sigma^* is the scale parameter of the Mittag-Leffler distribution 
-#' @param log.p logical; if \code{TRUE}, probabilitied \eqn{p} are given as \eqn{\log(p)}
-#' @param lower.tail logical; if TRUE, probabilities are \eqn{P(X\leq x)},
+#' @param scale scale parameter \eqn{\sigma} (default \code{scale = 1}) sets \eqn{sigma^\star = ei ^ (-1 / tail) * \sigma},
+#'  where sigma^* is the scale parameter of the Mittag-Leffler distribution
+#' @param log.p logical; if \code{TRUE}, probabilitied \eqn{p} are given as log(p)
+#' @param lower.tail logical; if TRUE, probabilities are \eqn{P(X \le x)},
 #'  otherwise, \eqn{P(X>x)}.
 #'
 #' @details The mixed distribution is a mixture of da Dirac measure
@@ -27,10 +27,10 @@
 #' For an arbitrary \eqn{\sigma>0} write \eqn{\sigma Z_\beta}.
 #' The mixed distribution has the c.d.f
 #' \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
-#' +\theta\cdot F^*_{\beta,\sigma^*}(x),}
-#' where \eqn{F^*_{\beta,\sigma^*}} is the c.d.f
+#' +\theta\cdot F^\star_{\beta,\sigma^\star}(x),}
+#' where \eqn{F^\star_{\beta,\sigma^\star}} is the c.d.f
 #' of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma)} distribution,
-#' where \eqn{\sigma^*} corresponds to the input \code{scale}.
+#' where \eqn{\sigma^\star} corresponds to the input \code{scale}.
 #'
 #'
 #' @return \code{rmixdistr} generates random variables,
@@ -52,9 +52,9 @@ rmixdistr <- function(n, tail, ei, scale = 1) {
     scale1 <- ei ^ (-1 / tail) * scale
 
   if (tail == 1) {
-    r <- ifelse(runif(n) > ei, 0, rexp(n, rate = 1 / scale1))
+    r <- ifelse(stats::runif(n) > ei, 0, stats::rexp(n, rate = 1 / scale1))
   } else{
-    r <- ifelse(runif(n) > ei, 0, MittagLeffleR::rml(n , tail = tail,
+    r <- ifelse(stats::runif(n) > ei, 0, MittagLeffleR::rml(n , tail = tail,
                                                      scale = scale1 ))
     }
   return(r)
@@ -62,11 +62,11 @@ rmixdistr <- function(n, tail, ei, scale = 1) {
 
 #' @rdname mixdistr
 #' @export
-pmixdistr <-  function(q, tail, ei, scale = 1, lower.tail = TRUE) {
+pmixdistr <-  function(q, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE) {
   stopifnot(tail > 0, tail <= 1, ei > 0, ei <= 1, scale > 0)
   scale1 <- ei ^ (-1 / tail) * scale
   if (tail == 1) {
-    p <- 1 - ei + ei * pexp(q, rate = 1 / scale1)
+    p <- 1 - ei + ei * stats::pexp(q, rate = 1 / scale1)
     p[q < 0] <- 0
   } else {
     p <- numeric(0)
@@ -98,7 +98,7 @@ qmixdistr <-  function(p, tail, ei, scale = 1, lower.tail = TRUE, log.p = FALSE)
   }
   if (tail == 1) {
     p[p < (1 - ei)] <- 1 - ei
-    q <- qexp((p - (1 - ei)) / ei, rate = 1 / scale)
+    q <- stats::qexp((p - (1 - ei)) / ei, rate = 1 / scale)
   } else {
     q <- numeric(length(p))
     if ( any(p > (1 - ei)) ) {
@@ -116,7 +116,7 @@ dmixdistr <- function(x, tail, ei, scale = 1, log.p = FALSE) {
   stopifnot(tail > 0, tail <= 1, ei > 0, ei <= 1, scale > 0)
   scale1 <- ei^{-1/tail} * scale
   if(tail == 1) {
-    d <- ei * dexp(x , rate = 1 / scale1)
+    d <- ei * stats::dexp(x , rate = 1 / scale1)
     d[x == 0] <- 1 - ei
   }
  else {
