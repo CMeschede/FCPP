@@ -2,9 +2,12 @@
 # ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
 # distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
 #' @export
-optim_multistart <- function(WW, ptail, distance_fct,
-                             t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
-                             a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
+optim_multistart_bt <- function(WW, distance_fct, ptail, rho,
+                                       t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
+                                       a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B") {
+  if(is.data.frame(WW) & length(WW) == 1) {
+    WW <- dplyr::pull(WW)
+  }
   start <- tidyr::crossing(
     t = t,
     e = e
@@ -14,27 +17,124 @@ optim_multistart <- function(WW, ptail, distance_fct,
                          tryCatch(
                            optim( par = c(t., e.), fn = function(x) {
                              do.call(
-                               distance_fct, list(WW = WW, tail = x[1],
-                                                  ei = x[2], ptail = ptail, ...)
-                               )
-                             },
-                             lower = c(a_tail, a_ei), upper = c(1, 1),
-                             method = method),
+                               distance_fct, list(WW = WW, tail = x[1], ei = x[2], 
+                                                  scale = ptail ^ {-1 / x[1]} * rho)
+                             )
+                           },
+                           lower = c(a_tail, a_ei), upper = c(1, 1),
+                           method = method),
                            error = function(x) NA
-                           )
-                         }),
+                         )
+                       }),
                        beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
-                                                             error = function(x) NA )),
+                                                            error = function(x) NA )),
                        theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
-                                                              error = function(x) NA )),
+                                                             error = function(x) NA )),
                        value = purrr::map_dbl(opt, ~tryCatch(.x$value,
-                                                              error = function(x) NA ))
+                                                             error = function(x) NA ))
   )
   est <- dplyr::select(est, -opt)
   est2 <- est[which.min(est$value), ]
   return(est2)
 }
 
+optim_multistart_btr <- function(WW, distance_fct, ptail, type = 1,
+                                            t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85), r = NULL, s = NULL,
+                                            a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B") {
+  if(is.data.frame(WW) & length(WW) == 1) {
+    WW <- dplyr::pull(WW)
+  }
+  initial <- MittagLeffleR::logMomentEstimator(WW) # for the starting point of rho
+  if(type == 1) {
+  start <- tidyr::crossing(
+    t = t,
+    e = e
+  )
+  if(is.null(r)) {
+    start <- start |> tidyr::crossing(
+      r = initial[2] * ptail ^ {1 / t}
+    )
+  } else {
+    start <- start |> tidyr::crossing(
+      r = r
+    )
+  }
+    
+  
+  # para_orig: parameter (tail, ei, scale)
+  # para: a transformed parameter so that the optimation is unconstrained
+  #para_orig <- function(para) {c()}
+  est <- dplyr::mutate(start,
+                       opt = purrr::pmap(list(t, e, r), function(t., e., r.) {
+                         tryCatch(
+                           optim( par = c(t., e., r.), fn = function(x) {
+                             do.call(
+                               distance_fct, list(WW = WW, tail = x[1], ei = x[2], 
+                                                  scale = ptail ^ {-1 / x[1]} * x[3])
+                             )
+                           },
+                           lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
+                           method = method),
+                           error = function(x) NA
+                         )
+                       }),
+                       beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
+                                                            error = function(x) NA )),
+                       theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
+                                                             error = function(x) NA )),
+                       rho = purrr::map_dbl(opt, ~tryCatch(.x$par[3],
+                                                             error = function(x) NA )),
+                       value = purrr::map_dbl(opt, ~tryCatch(.x$value,
+                                                             error = function(x) NA ))
+  )
+  est <- dplyr::select(est, -opt)
+  est2 <- est[which.min(est$value), ]
+  return(est2)
+  }
+  if(type == 2) {
+    if(is.null(r)) {
+      start <- start |> tidyr::crossing(
+        s = initial[2]
+      )
+    } else {
+      start <- start |> tidyr::crossing(
+        s = s
+      )
+    }
+    
+    # para_orig: parameter (tail, ei, scale)
+    # para: a transformed parameter so that the optimation is unconstrained
+    #para_orig <- function(para) {c()}
+    est <- dplyr::mutate(start,
+                         opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
+                           tryCatch(
+                             optim( par = c(t., e., s.), fn = function(x) {
+                               do.call(
+                                 distance_fct, list(WW = WW, tail = x[1], ei = x[2], scale = x[3])
+                               )
+                             },
+                             lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
+                             method = method),
+                             error = function(x) NA
+                           )
+                         }),
+                         beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
+                                                              error = function(x) NA )),
+                         theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
+                                                               error = function(x) NA )),
+                         rho = purrr::map_dbl(opt, ~tryCatch(.x$par[3] * ptail ^ {1 / .x$par[1]},
+                                                             error = function(x) NA )),
+                         sigma =  purrr::map_dbl(opt, ~tryCatch(.x$par[3],
+                                                                error = function(x) NA )),
+                         value = purrr::map_dbl(opt, ~tryCatch(.x$value,
+                                                               error = function(x) NA ))
+    )
+    est <- dplyr::select(est, -opt)
+    est2 <- est[which.min(est$value), ]
+    return(est2)
+  }
+}
+                                              
 # WW - vector of inter-exceedance times
 # ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
 # distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
