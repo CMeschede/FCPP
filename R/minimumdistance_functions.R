@@ -9,7 +9,7 @@ distance_cm <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   kstar <- length(WW) # number of IETs
@@ -27,7 +27,7 @@ distance_cm_mod1 <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   kstar <- length(WW) # number of IETs
@@ -45,7 +45,7 @@ distance_cm_mod2 <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   kstar <- length(WW) # number of IETs
@@ -83,7 +83,7 @@ distance_cm_mod3 <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   kstar <- length(WW) # number of IETs
@@ -106,7 +106,7 @@ distance_cm_approx <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
@@ -124,7 +124,7 @@ distance_cm_mod1_approx <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
@@ -142,7 +142,7 @@ distance_cm_mod2_approx <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)) {
+  if(any(WW < 0)) {
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
@@ -160,7 +160,7 @@ distance_cm_mod3_approx <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  if(any(WW <= 0)){
+  if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
   k <- length(WW) + 1
