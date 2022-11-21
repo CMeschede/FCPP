@@ -2,7 +2,7 @@
 # ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
 # distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
 #' @export
-optim_multistart_bt <- function(WW, distance_fct, ptail, rho,
+optim_bt <- function(WW, distance_fct, ptail, rho,
                                        t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
                                        a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B") {
   if(is.data.frame(WW) & length(WW) == 1) {
@@ -40,7 +40,7 @@ optim_multistart_bt <- function(WW, distance_fct, ptail, rho,
 
 
 #' @export
-optim_multistart_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
+optim_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
                                             t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
                                             r = NULL, s = NULL, sstar = NULL,
                                             a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B") {
