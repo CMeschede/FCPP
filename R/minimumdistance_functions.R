@@ -1,4 +1,49 @@
-## minimum distance functions
+#' Minimum Distance Functions
+#'
+#' Functions that calculate the Cramér-von-Mises (or modifications of it) distance
+#' between the empirical distribution funtion
+#' of given waiting times and the Cumulative Distribution function
+#' of a mixture distribution of a dirac measure in zero and a
+#' Mittag-Leffler distribution.
+#'
+#'@aliases distance distance_cm distance_cm1 and distance_cm2
+#'@param WW A data.frame or a tibble containing inter exceedance times
+#'@param tail = \eqn{\beta}; tail parameter
+#'@param ei = \eqn{\theta}; extremal index
+#'@param ptail = P(JJ > u) = k / n (number of exceedances / number of observations)
+#'
+#'
+#'@details
+#'For the cumulative distribution function
+#' \eqn{F^*_{\beta,\theta}} of a \eqn{ML\big(\beta,\theta^{-1/\beta}\big)}-distribution,
+#' the cumulative distribution function of the mixture distribution is given as
+#'\deqn{F_{\beta,\theta}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
+#'(x)+\theta \cdot F^*_{\beta,\theta}(x).}
+#'The Cramér von Mises distance between the empirical distribution function
+#'\eqn{F_{k_*}} of \code{WW}
+#'and \eqn{F^*_{\beta,\theta}} is defined as
+#'\deqn{\Delta^{[CM]}(F_{k_*},F_{\beta,\theta})
+#'=\int\limits_0^\infty(F_{k_*}(x)-F_{\beta,\theta}(x))^2
+#'dF_{\beta,\theta}(x)
+#'}
+#' where \eqn{k_*=}\code{length(WW)}.
+#' The function \code{distance_cm_mod1} and \code{distance_cm_mod2}
+#' calculating the modified version of
+#' the Cramér von Mises Distance functions
+#' \deqn{
+#' \Delta^{[CMmod1]}(F_{k_*},F_{\beta,\theta})
+#' =\int\limits_0^\infty(F_{k_*}(x)-F_{\beta,\theta}(x))^2
+#' dF^*_{\beta,\theta}(x)
+#' }
+#' respectively
+#' \deqn{
+#' \Delta^{[CMmod2]}(F_{k_*},F_{\beta,\theta})
+#' =\int\limits_0^\infty(\max\lbrace F_{k_*}(x),1-\theta\rbrace
+#' -F_{\beta,\theta}(x))^2
+#' dF^*_{\beta,\theta}(x)
+#' }.
+#'
+#' @name distance
 
 #' @export
 distance_cm <- function(WW, tail, ei, scale = 1) {
@@ -22,6 +67,7 @@ distance_cm <- function(WW, tail, ei, scale = 1) {
   return(s)
 }
 
+#' @rdname distance
 #' @export
 distance_cm_mod1 <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {
@@ -40,6 +86,7 @@ distance_cm_mod1 <- function(WW, tail, ei, scale = 1) {
   return(s)
 }
 
+#' @rdname distance
 #' @export
 distance_cm_mod2 <- function(WW, tail, ei, scale = 1) {
   if(is.data.frame(WW) & length(WW) == 1) {

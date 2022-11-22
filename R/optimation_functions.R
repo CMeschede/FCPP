@@ -1,6 +1,42 @@
-# WW - vector of inter-exceedance times
-# ptail - P(JJ > u) = k/n (number of exceedances over number of observations)
-# distance_fct - r-function calculating the distance between the asymptotic and empirical cdf
+#'Optim function for known scale parameter
+#'
+#'An optimization function, that estimates the tail
+#'parameter and the extremal index of
+#'the mixture distribution consisting of a
+#'dirac measure in zero and a Mittag Leffler distribution.
+#'The function is using a grid of multiple initialization values
+#'for the extremal index and the tail parameter.
+#'
+#'
+#' @param WW  vector of inter-exceedance times
+#' @param ptail  P(JJ > u) = k/n (number of exceedances over number of observations)
+#' @param distance_fct  R-function calculating the distance between the asymptotic and empirical cdf
+#' @param rho known parameter
+#' @param t vector of starting values in \eqn{(0,1]} for the tail parameter
+#' @param e vector of starting values in \eqn{[0,1]} for the extremal index
+#' @param a_tail lowest possible estimation for the tail parameter
+#' @param a_ei lowest possible estimation for the extremal index
+#' @param method algorithm that is used by \code{stats::optim} to minimize the
+#' distance function
+#'
+#' @details
+#' All combinations of \code{e} and \code{t} are used as starting values
+#' to compute the minimum of \code{distance_fct}. The function is minimized
+#' using \code{stats::optim} and every combination \code{e} and \code{t}.
+#' The parameters corresponding to the lowest value found, are returned
+#' as estimation for \code{ei} and \code{tail}.
+#'
+#' @return
+#' A tibble containing the estimation for
+#' the extremal index and the tail parameter. \code{value} is the minimum
+#' found
+#' value of the choosen distance.
+#'
+
+#
+#
+#
+#'@name optim
 #' @export
 optim_bt <- function(WW, distance_fct, ptail, rho,
                                        t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
@@ -39,6 +75,7 @@ optim_bt <- function(WW, distance_fct, ptail, rho,
 }
 
 
+#' @rdname optim
 #' @export
 optim_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
                                             t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
