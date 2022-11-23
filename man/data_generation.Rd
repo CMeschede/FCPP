@@ -4,19 +4,19 @@
 \alias{data_generation}
 \title{Data Generating Function}
 \usage{
-data_generation(n, ei = 1, stability = 1, wait_dist = "stable")
+data_generation(n, ei = 1, stability = 1, scale = 1, wait_dist = "stable")
 }
 \arguments{
 \item{n}{number of observations}
 
-\item{ei}{true parameter theta in (0,1] (extremal index)}
+\item{ei}{extremal index \eqn{\theta \in (0,1]}}
 
-\item{stability}{The stability parameter of the distribution of the waiting times.
-The stability parameter is in \eqn{\mathbb{R}^+\setminus\lbrace 1\rbrace} if \code{wait_dist}
-is "pareto" and in (0,1] else.}
+\item{stability}{stability parameter \eqn{\alpha > 0}
+used for the waiting time distribution (see 'Details')}
 
-\item{wait_dist}{distribution of waiting times. Should be "stable",
-"ML" (Mittag-Leffler Distribution) or "pareto".}
+\item{scale}{scale parameter \eqn{\sigma > 0}. Default \code{scale = 1}.}
+
+\item{wait_dist}{distribution of the waiting times WW (see 'Details')}
 }
 \value{
 A tibble with
@@ -26,31 +26,43 @@ A tibble with
 \code{WW} independent waiting times between the events.
 }
 \description{
-Function that generates a marked point process (JJ\link{i}, WW\link{i}) \eqn{i = 1,...,n}.
-The JJ\link{i} is the i-th mark and WW\link{i} is the waiting time between the i-1- and
-i-th event.
+Function that generates a marked point process \eqn{(JJ[i], WW[i]), i = 1,...,n}.
+The JJ\link{i} is the i-th mark and WW\link{i} is the waiting time between the (i-1)-th and
+i-th event. The marks (JJ\link{i}) form a MAR-process which is a stationary time series
+with extremal index \eqn{\theta \in (0,1]}.
 }
 \details{
-If the distribution of the waiting times is chosen as "stable" and the stability parameter
-is smaller than 1, then the waiting times are stable distributed.
-In this case \code{WW} are generated using the
-package \code{stabledist}. In the special case of \code{stability}=1, the stable distribution
-simplifies to a dirac measure in 1.
+The waiting time distribution can be chosen as "\code{stable}", "\code{ML}" or
+"\code{pareto}".
 
-For the case of \code{wait_dist="ML"} a Mittag-Leffler distribution where the
-tail parameter and the stability parameter are the same. If the stability parameter
-is equal to 1, then the Mittag-Leffler distribution corresponds to an exponential
-distribution with
-rate 1. For the data generation of the Mittag-Leffler distribution
+If \code{wait_dist = "stable"}, the \code{stability} parameter \eqn{\alpha} has to be in
+the interval (0,1].
+In case of \eqn{\alpha < 1}, the WWs are stable distributed with stability parameter \eqn{\alpha}.
+Then, the distribution is heavy-tailed in the sense that mean and variance do
+not exist.
+In this case \code{WW} are generated using the package \code{stabledist}.
+In the special case of \code{stability = 1}, the waiting times are equidistant equal \eqn{\sigma},
+since the stable distribution converges in distribution to the degenerative dirac measure in \eqn{\sigma}.
+
+If \code{wait_dist = "ML"}, the \code{stability} parameter \eqn{\alpha} has to be in
+the interval (0,1].
+The WWs are Mittag-Leffler distributed with stability/tail parameter \eqn{\alpha}.
+For \eqn{\alpha < 1} the distribution is heavy-tailed in the sense that mean
+and variance do not exist.
+In case of \eqn{\alpha = 1}, the Mittag-Leffler distribution corresponds to
+an exponential distribution with rate \eqn{1/\sigma}.
+For the data generation of the Mittag-Leffler distribution
 the package \code{MittagLeffleR} is used.
 
-For \code{wait_dist="pareto"} and a stability parameter
-\eqn{\alpha} smaller than 1, a Pareto distribution
-with shape parameter \eqn{\alpha} and scale parameter
-\eqn{\big(1/\Gamma(1-\alpha)\big)^{1/\alpha}} is used
-to generate the waiting times. For \eqn{\alpha} larger than 1 the
-scale parameter becomes \eqn{(\alpha-1)/\alpha}.For the
-generation of the waiting times the Package \code{ReIns} is used.
+If \code{wait_dist = "pareto"}, the \code{stability} parameter \eqn{\alpha}
+has to be in \eqn{(0, \infty)/{1}}.
+If \eqn{\alpha < 1}, a Pareto distribution with shape parameter \eqn{\alpha}
+and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} \cdot \sigma} is used.
+Then the distribution is heavy-tailed in the sense that mean and variance do not exist.
+If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha \sigma}.
+For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\sigma}. For \eqn{\alpha > 2}
+the variance exists additionally.
+For the generation of the Pareto distribution the Package \code{ReIns} is used.
 }
 \examples{
 dat <- data_generation(20, 0.5, 0.5)
