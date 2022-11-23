@@ -18,7 +18,7 @@
 #' @param wait_dist distribution of the waiting times WW (see 'Details')
 #'
 #' @details
-#' The event magnitudes/ marks (JJ) form a Max-Autoregression(MAR)-process.
+#' The event magnitudes/ marks (JJ) form a max-autoregressive(MAR)-process.
 #' This process is stationary with extremal index \eqn{\theta}.
 #'
 #' The waiting times (WWs) are i.i.d. and stochastically independent to the

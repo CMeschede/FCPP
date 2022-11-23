@@ -19,19 +19,30 @@ used for the waiting time distribution (see 'Details')}
 \item{wait_dist}{distribution of the waiting times WW (see 'Details')}
 }
 \value{
-A tibble with
+A tibble with two columns
 
-\code{JJ} a stationary MAR-process with extremal index \eqn{\theta} (ei).
+\code{JJ} a stationary MAR-process with extremal index \code{ei}
 
-\code{WW} independent waiting times between the events.
+\code{WW} independent waiting times with stability parameter \code{stability}
+and scale parameter \code{scale}
 }
 \description{
 Function that generates a marked point process \eqn{(JJ[i], WW[i]), i = 1,...,n}.
 The JJ\link{i} is the i-th mark and WW\link{i} is the waiting time between the (i-1)-th and
 i-th event. The marks (JJ\link{i}) form a MAR-process which is a stationary time series
 with extremal index \eqn{\theta \in (0,1]}.
+The generated process fulfills all assumptions so that the inter-exceedance times (IETs)
+are asymptotically mixture distributed with the dirac measure at point zero and the
+Mittag-Leffler distribution as parts.
+The IETs are the times between two consequtive extremes which are identified
+by the peak-over-threshold (POT) method.
 }
 \details{
+The event magnitudes/ marks (JJ) form a max-autoregressive(MAR)-process.
+This process is stationary with extremal index \eqn{\theta}.
+
+The waiting times (WWs) are i.i.d. and stochastically independent to the
+event magnitudes (JJ).
 The waiting time distribution can be chosen as "\code{stable}", "\code{ML}" or
 "\code{pareto}".
 
@@ -57,12 +68,22 @@ the package \code{MittagLeffleR} is used.
 If \code{wait_dist = "pareto"}, the \code{stability} parameter \eqn{\alpha}
 has to be in \eqn{(0, \infty)/{1}}.
 If \eqn{\alpha < 1}, a Pareto distribution with shape parameter \eqn{\alpha}
-and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} \cdot \sigma} is used.
+and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} * \sigma} is used.
 Then the distribution is heavy-tailed in the sense that mean and variance do not exist.
-If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha \sigma}.
+If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha * \sigma}.
 For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\sigma}. For \eqn{\alpha > 2}
 the variance exists additionally.
 For the generation of the Pareto distribution the Package \code{ReIns} is used.
+
+For all three waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
+it holds that they are in the domain of attraction of the stable distribution
+which is a positively skewed sum-stable distribution.
+
+The generated process (JJ,WW) fulfills all assumptions so that the inter-exceedance times (IETs)
+are asymptotically mixture distributed with the dirac measure at point zero and the
+Mittag-Leffler distribution as parts.
+The IETs are the times between two consequtive extremes which are identified
+by the peak-over-threshold (POT) method.
 }
 \examples{
 dat <- data_generation(20, 0.5, 0.5)
