@@ -17,48 +17,49 @@ distance_cm_mod1(WW, tail, ei, scale = 1)
 distance_cm_mod2(WW, tail, ei, scale = 1)
 }
 \arguments{
-\item{WW}{A data.frame or a tibble containing inter exceedance times}
+\item{WW}{a vector or tibble (data.frame) with one column containing the
+positive valued sample}
 
-\item{tail}{= \eqn{\beta}; tail parameter}
+\item{tail}{tail parameter \eqn{\beta} of the Mittag-Leffler distribution}
 
-\item{ei}{= \eqn{\theta}; extremal index}
+\item{ei}{extremal index/ weighting \eqn{\theta}}
 
-\item{ptail}{= P(JJ > u) = k / n (number of exceedances / number of observations)}
+\item{scale}{scale parameter \eqn{\sigma}}
 }
 \description{
-Functions that calculate the Cramér-von-Mises (or modifications of it) distance
-between the empirical distribution funtion
-of given waiting times and the Cumulative Distribution function
-of a mixture distribution of a dirac measure in zero and a
-Mittag-Leffler distribution.
+Functions that calculate the Cramér-von Mises distance (with modifications)
+between the empirical distribution function (e.c.d.f.) of a positive valued sample \code{WW}
+and a mixture distribution with the dirac measure in zero and Mittag-Leffler distribution
+as parts.
+The sample \code{WW} may be  return times of events of interests.
 }
 \details{
-For the cumulative distribution function
-\eqn{F^*_{\beta,\theta}} of a \eqn{ML\big(\beta,\theta^{-1/\beta}\big)}-distribution,
-the cumulative distribution function of the mixture distribution is given as
-\deqn{F_{\beta,\theta}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
-(x)+\theta \cdot F^*_{\beta,\theta}(x).}
-The Cramér von Mises distance between the empirical distribution function
-\eqn{F_{k_*}} of \code{WW}
-and \eqn{F^*_{\beta,\theta}} is defined as
-\deqn{\Delta^{[CM]}(F_{k_*},F_{\beta,\theta})
-=\int\limits_0^\infty(F_{k_*}(x)-F_{\beta,\theta}(x))^2
-dF_{\beta,\theta}(x)
+The cumulative distribution function (c.d.f.) of the mixture distribution is given as
+\deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
+(x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
+where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
+with tail-parameter \eqn{\beta <= 1} and sclae parameter scale parameter
+\eqn{\sigma* = \theta^{-1/\beta}\cdot \sigma > 0} (short notation \eqn{ML(\beta,\sigma\*)}).
+The Cramér-von Mises distance between the e.c.d.f. \eqn{F_{n}} of \eqn{WW_1,\dots,WW_n}
+and the mixture distribution is then defined as
+\deqn{\Delta^{[CM]}(F_{n},F_{\beta,\theta,\theta})
+=\int\limits_0^\infty(F_{n}(x)-F_{\beta,\theta,\sigma}(x))^2
+dF_{\beta,\theta,\sigma}(x)
 }
-where \eqn{k_*=}\code{length(WW)}.
+where \eqn{n=}\code{length(WW)}.
 The function \code{distance_cm_mod1} and \code{distance_cm_mod2}
-calculating the modified version of
-the Cramér von Mises Distance functions
+calculate two modified version of the Cramér-von Mises distance
 \deqn{
-\Delta^{[CMmod1]}(F_{k_*},F_{\beta,\theta})
-=\int\limits_0^\infty(F_{k_*}(x)-F_{\beta,\theta}(x))^2
-dF^*_{\beta,\theta}(x)
+\Delta^{[CMmod1]}(F_{n},F_{\beta,\theta,\sigma})
+=\int\limits_0^\infty(F_{n}(x)-F_{\beta,\theta,\sigma}(x))^2
+dF^*_{\beta,\theta,\sigma}(x)
 }
-respectively
+and
 \deqn{
-\Delta^{[CMmod2]}(F_{k_*},F_{\beta,\theta})
-=\int\limits_0^\infty(\max\lbrace F_{k_*}(x),1-\theta\rbrace
--F_{\beta,\theta}(x))^2
-dF^*_{\beta,\theta}(x)
-}.
+\Delta^{[CMmod2]}(F_{n},F_{\beta,\theta,\sigma})
+=\int\limits_0^\infty(\max\lbrace F_{n}(x),1-\theta\rbrace
+-F_{\beta,\theta,\sigma}(x))^2
+dF^*_{\beta,\theta,\sigma}(x),
+}
+respectively.
 }
