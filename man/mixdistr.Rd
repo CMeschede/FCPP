@@ -21,10 +21,11 @@ dmixdistr(x, tail, ei, scale = 1, log.p = FALSE)
 
 \item{tail}{tail parameter \eqn{\beta}}
 
-\item{ei}{extremal index / the weighting \eqn{\theta}}
+\item{ei}{extremal index / weighting \eqn{\theta}}
 
-\item{scale}{scale parameter \eqn{\sigma} (default \code{scale = 1}) sets \eqn{sigma^\star = ei ^ (-1 / tail) * \sigma},
-where sigma^* is the scale parameter of the Mittag-Leffler distribution}
+\item{scale}{scale parameter \eqn{\sigma} (default \code{scale = 1}) sets
+\eqn{\sigma* = \theta ^ (-1 / \beta)  \sigma},
+where \eqn{\sigma*} is the scale parameter of the Mittag-Leffler distribution}
 
 \item{lower.tail}{logical; if TRUE, probabilities are \eqn{P(X \le x)},
 otherwise, \eqn{P(X>x)}.}
@@ -47,20 +48,17 @@ random variate generation for a mixture distribuion with the Dirac measure at
 point zero and the Mittag-Leffler distribution as components.
 }
 \details{
-The mixed distribution is a mixture of da Dirac measure
-in 0 and a Mittag-Leffler distribution with tail parameter
-\eqn{\beta} and a scale parameter \eqn{\sigma}. A Mittag-Leffler \eqn{ML(\beta,\sigma)}
-distributed random variable \eqn{Z_{\beta}} with parameter
-\eqn{\beta\in(0,1]} and \eqn{\sigma=1} can be defined on the positive real numbers
-by its Laplace transform
-\deqn{\mathcal{L}_{Z_{\beta}}(s)=\frac{1}{1+s^\beta}_.}
-For an arbitrary \eqn{\sigma>0} write \eqn{\sigma Z_\beta}.
-The mixed distribution has the c.d.f
-\deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot 1_{[0,\infty)}(x)
-+\theta\cdot F^\star_{\beta,\sigma^\star}(x),}
-where \eqn{F^\star_{\beta,\sigma^\star}} is the c.d.f
-of the \eqn{ML(\beta,\theta^{-1/\beta}\cdot\sigma)} distribution,
-where \eqn{\sigma^\star} corresponds to the input \code{scale}.
+The mixed distribution is a mixture of a Dirac measure
+at point zero and a Mittag-Leffler distribution with tail parameter
+\eqn{\beta} and a scale parameter \eqn{\sigma*} (short notation \eqn{ML(\beta,\sigma*)}),
+where \eqn{\sigma*=\theta^{-1\\beta} \sigma}.
+
+The c.d.f. of the mixture distribution is given by
+\deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta) 1_{[0,\infty)}(x)
++ \theta F*_{\beta,\sigma*}(x),}
+where \eqn{F*} is the c.d.f. of the Mittag-Leffler distribution.
+For clarification, \eqn{\sigma} corresponds to the input \code{scale} and
+\eqn{\sigma*=\theta^{1/\beta} \sigma}.
 }
 \examples{
 rmixdistr(n = 10, tail = 0.8, ei = 0.5)

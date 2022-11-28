@@ -9,6 +9,9 @@ interarrivaltime(data)
 \arguments{
 \item{data}{data frame with two columns}
 }
+\value{
+
+}
 \description{
 Interarrivaltime
 }
