@@ -77,85 +77,33 @@ optim_bt <- function(WW, distance_fct, ptail, rho,
 
 #' @rdname optim
 #' @export
-optim_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
-                                            t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85),
-                                            r = NULL, s = NULL, sstar = NULL,
-                                            a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B") {
+optim_bts <- function(WW, distance_fct,
+                      t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85), s = NULL,
+                      a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
   # type1: es wird beta, theta und rho geschaetzt
   # type2: es wird beta, theta und sigma geschaetzt
   # type3: es wird beta, theta und sigma^star geschaetzt
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  initial <- MittagLeffleR::logMomentEstimator(WW) # for the starting point of rho/sigma/sigmastar
+  initial <- MittagLeffleR::logMomentEstimator(WW) # for the starting point of sigma
   # initial[2] = sigmastar
   start <- tidyr::crossing(
     t = t,
     e = e
   )
-  if(type == 1) {
-  if(is.null(ptail)) stop("for type = 1 you need the tail probability ptail")
-  if(is.numeric(r)) {
+  if(is.numeric(s)) {
     start <- start |> tidyr::crossing(
-      r = r
+       s = s
     )
-  } else if(is.numeric(s)) {
-    start <- start |> tidyr::crossing(
-      s = s
-    ) |> dplyr::mutate(
-      r = s * ptail ^ {1 / t}
-    ) |> dplyr::select(-s)
   } else {
     start <- start |> dplyr::mutate(
-      r = initial[2] * (ptail * e) ^ {1 / t}
+      s = initial[2] * e ^ {1 / t}
     )
   }
 
   est <- dplyr::mutate(start,
-                       opt = purrr::pmap(list(t, e, r), function(t., e., r.) {
-                         tryCatch(
-                           stats::optim( par = c(t., e., r.), fn = function(x) {
-                             do.call(
-                               distance_fct, list(WW = WW, tail = x[1], ei = x[2],
-                                                  scale = ptail ^ {-1 / x[1]} * x[3])
-                             )
-                           },
-                           lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
-                           method = method),
-                           error = function(x) NA
-                         )
-                       }),
-                       beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
-                                                            error = function(x) NA )),
-                       theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
-                                                             error = function(x) NA )),
-                       rho = purrr::map_dbl(opt, ~tryCatch(.x$par[3],
-                                                             error = function(x) NA )),
-                       value = purrr::map_dbl(opt, ~tryCatch(.x$value,
-                                                             error = function(x) NA ))
-  )
-  est <- dplyr::select(est, -opt)
-  est2 <- est[which.min(est$value), ]
-  return(est2)
-  }
-
-  if(type == 2) {
-    if(is.numeric(s)) {
-      start <- start |> tidyr::crossing(
-        s = s
-      )
-    } else if(is.numeric(r) & is.numeric(ptail) & length(ptail) == 1) {
-      start <- start |> tidyr::crossing(
-        s = r * ptail ^ {-1 / t}
-      )
-    } else {
-      start <- start |> dplyr::mutate(
-        s = initial[2] * e ^ {1 / t}
-      )
-    }
-
-    est <- dplyr::mutate(start,
-                         opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
+                       opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
                            tryCatch(
                              stats::optim( par = c(t., e., s.), fn = function(x) {
                                do.call(
@@ -163,7 +111,7 @@ optim_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
                                )
                              },
                              lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
-                             method = method),
+                             method = method, ...),
                              error = function(x) NA
                            )
                          }),
@@ -179,56 +127,4 @@ optim_btr <- function(WW, distance_fct, ptail = NULL, type = 1,
     est <- dplyr::select(est, -opt)
     est2 <- est[which.min(est$value), ]
     return(est2)
-  }
-
-  if(type == 3) {
-    if(is.numeric(sstar)) {
-      start <- start |> tidyr::crossing(
-        sstar = sstar
-      )
-    } else if(is.numeric(s)) {
-      start <- start |> tidyr::crossing(
-        s = s
-      ) |> dplyr::mutate(
-        sstar = e ^ {-1 / t} * s
-      ) |> dplyr::select(-s)
-
-    } else if(is.numeric(r) & is.numeric(ptail) & length(ptail) == 1) {
-      start <- start |> tidyr::crossing(
-        r = r
-      ) |> dplyr::mutate(
-        sstar = (e * ptail) ^ {-1 / t} * r
-      ) |> dplyr::select(-r)
-    } else {
-      start <- start |> dplyr::mutate(
-        sstar = initial[2]
-      )
-    }
-
-    est <- dplyr::mutate(start,
-                         opt = purrr::pmap(list(t, e, sstar), function(t., e., sstar.) {
-                           tryCatch(
-                             stats::optim( par = c(t., e., sstar.), fn = function(x) {
-                               do.call(
-                                 distance_fct, list(WW = WW, tail = x[1], ei = x[2], scale = x[2] ^ {1 / x[1]} * x[3])
-                               )
-                             },
-                             lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
-                             method = method),
-                             error = function(x) NA
-                           )
-                         }),
-                         beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
-                                                              error = function(x) NA )),
-                         theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
-                                                               error = function(x) NA )),
-                         sigmastar =  purrr::map_dbl(opt, ~tryCatch(.x$par[3],
-                                                                error = function(x) NA )),
-                         value = purrr::map_dbl(opt, ~tryCatch(.x$value,
-                                                               error = function(x) NA ))
-    )
-    est <- dplyr::select(est, -opt)
-    est2 <- est[which.min(est$value), ]
-    return(est2)
-  }
 }
