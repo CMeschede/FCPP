@@ -14,7 +14,8 @@
 #' @param ei extremal index \eqn{\theta \in (0,1]}
 #' @param stability stability parameter \eqn{\alpha > 0}
 #' used for the waiting time distribution (see 'Details')
-#' @param scale scale parameter \eqn{\sigma > 0}. Default \code{scale = 1}.
+#' @param wait_scale scale parameter of the waiting time distribution \eqn{\rho > 0}.
+#' Default \code{wait_scale = 1}.
 #' @param wait_dist distribution of the waiting times WW (see 'Details')
 #'
 #' @details
@@ -32,8 +33,8 @@
 #' Then, the distribution is heavy-tailed in the sense that mean and variance do
 #' not exist.
 #' In this case \code{WW} are generated using the package \code{stabledist}.
-#' In the special case of \code{stability = 1}, the waiting times are equidistant equal \eqn{\sigma},
-#' since the stable distribution converges in distribution to the degenerative dirac measure in \eqn{\sigma}.
+#' In the special case of \code{stability = 1}, the waiting times are equidistant equal \eqn{\rho},
+#' since the stable distribution converges in distribution to the degenerative dirac measure in \eqn{\rho}.
 #'
 #' If \code{wait_dist = "ML"}, the \code{stability} parameter \eqn{\alpha} has to be in
 #' the interval (0,1].
@@ -41,17 +42,17 @@
 #' For \eqn{\alpha < 1} the distribution is heavy-tailed in the sense that mean
 #' and variance do not exist.
 #' In case of \eqn{\alpha = 1}, the Mittag-Leffler distribution corresponds to
-#' an exponential distribution with rate \eqn{1/\sigma}.
+#' an exponential distribution with rate \eqn{1/\rho}.
 #' For the data generation of the Mittag-Leffler distribution
 #' the package \code{MittagLeffleR} is used.
 #'
 #' If \code{wait_dist = "pareto"}, the \code{stability} parameter \eqn{\alpha}
 #' has to be in \eqn{(0, \infty)/{1}}.
 #' If \eqn{\alpha < 1}, a Pareto distribution with shape parameter \eqn{\alpha}
-#' and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} * \sigma} is used.
+#' and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} * \rho} is used.
 #' Then the distribution is heavy-tailed in the sense that mean and variance do not exist.
-#' If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha * \sigma}.
-#' For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\sigma}. For \eqn{\alpha > 2}
+#' If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha * \rho}.
+#' For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\rho}. For \eqn{\alpha > 2}
 #' the variance exists additionally.
 #' For the generation of the Pareto distribution the Package \code{ReIns} is used.
 #'
@@ -62,7 +63,7 @@
 #' The generated process (JJ,WW) fulfills all assumptions so that the inter-exceedance times (IETs)
 #' are asymptotically mixture distributed with the dirac measure at point zero and the
 #' Mittag-Leffler distribution as parts.
-#' The IETs are the times between two consequtive extremes which are identified
+#' The IETs are the times between two consecutive extremes which are identified
 #' by the peak-over-threshold (POT) method.
 #'
 #' @return
@@ -71,7 +72,7 @@
 #' \code{JJ} a stationary MAR-process with extremal index \code{ei}
 #'
 #' \code{WW} independent waiting times with stability parameter \code{stability}
-#' and scale parameter \code{scale}
+#' and scale parameter \code{wait_scale}
 #'
 #' @export
 #'
@@ -82,7 +83,7 @@
 #' dat2
 
 
-data_generation <- function(n, ei = 1, stability = 1, scale = 1,
+data_generation <- function(n, ei = 1, stability = 1, wait_scale = 1,
                             wait_dist = "stable") {
   ## input control:
   # 'n' number of observations
@@ -115,7 +116,7 @@ data_generation <- function(n, ei = 1, stability = 1, scale = 1,
 
   # generating event values (magnitudes):
     J <- rep(0, n)
-    eps <- extRemes::revd(n, scale = 1, shape = 1, loc = 1)
+    eps <- extRemes::revd(n, wait_scale = 1, shape = 1, loc = 1)
     J[1] <- eps[1]
     if(n >= 2) {
       for (i in 2:n){
@@ -161,6 +162,6 @@ if(wait_dist == "stable") { # stable
        W <- stats::rexp(n, rate = 1)
      }
   }
-  W <- scale * W
+  W <- wait_scale * W
   return(tibble::tibble(JJ = J, WW = W))
 }
