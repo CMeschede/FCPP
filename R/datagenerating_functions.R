@@ -116,7 +116,7 @@ data_generation <- function(n, ei = 1, stability = 1, wait_scale = 1,
 
   # generating event values (magnitudes):
     J <- rep(0, n)
-    eps <- extRemes::revd(n, wait_scale = 1, shape = 1, loc = 1)
+    eps <- extRemes::revd(n, scale = 1, shape = 1, loc = 1)
     J[1] <- eps[1]
     if(n >= 2) {
       for (i in 2:n){
