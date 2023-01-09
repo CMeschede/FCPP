@@ -80,14 +80,11 @@ optim_bt <- function(WW, distance_fct, ptail, rho,
 optim_bts <- function(WW, distance_fct,
                       t = c(0.25,0.55,0.85), e = c(0.25,0.55,0.85), s = NULL,
                       a_tail = 0.1, a_ei = 0.1, method = "L-BFGS-B", ...) {
-  # type1: es wird beta, theta und rho geschaetzt
-  # type2: es wird beta, theta und sigma geschaetzt
-  # type3: es wird beta, theta und sigma^star geschaetzt
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
   initial <- MittagLeffleR::logMomentEstimator(WW) # for the starting point of sigma
-  # initial[2] = sigmastar
+  # initial[2] = sigma
   start <- tidyr::crossing(
     t = t,
     e = e
