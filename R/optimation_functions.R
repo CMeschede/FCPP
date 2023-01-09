@@ -97,8 +97,8 @@ optim_bts <- function(WW, distance_fct,
        s = s
     )
   } else {
-    start <- start |> dplyr::mutate(
-      s = initial[2] * e ^ {1 / t}
+    start <- start |> tidyr::crossing(
+      s = c(initial[2], mean(WW))
     )
   }
 
