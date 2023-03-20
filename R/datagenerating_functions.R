@@ -17,6 +17,7 @@
 #' @param wait_scale scale parameter of the waiting time distribution \eqn{\rho > 0}.
 #' Default \code{wait_scale = 1}.
 #' @param wait_dist distribution of the waiting times WW (see 'Details')
+#' @param u threshold  (default NULL); if u is numeric, it holds JJ[1] > u
 #'
 #' @details
 #' The event magnitudes/ marks (JJ) form a max-autoregressive(MAR)-process.
@@ -83,8 +84,8 @@
 #' dat2
 
 
-data_generation <- function(n, ei = 1, stability = 1, wait_scale = 1,
-                            wait_dist = "stable") {
+data_generation <- function(n, stability = 1, ei = 1, wait_scale = 1,
+                            wait_dist = "stable", u = NULL) {
   ## input control:
   # 'n' number of observations
   if(!isTRUE(all.equal(n , round(n))) || length(n) != 1)
@@ -115,11 +116,20 @@ data_generation <- function(n, ei = 1, stability = 1, wait_scale = 1,
   }
 
   # generating event values (magnitudes):
-    J <- rep(0, n)
     eps <- extRemes::revd(n, scale = 1, shape = 1, loc = 1)
+    # if a threshold u is given the first given magnitude exceeds the threshold
+    # and the sample size becomes n + 1
+    if(is.numeric(u)) {
+      p <-  extRemes::pevd(u, scale = 1, shape = 1, loc = 1)
+      r <-  stats::runif(1, p, 1)
+      J0 <- extRemes::qevd(r, scale = 1, shape = 1, loc = 1)
+      eps <- c(J0, eps)
+    }
+    m <- length(eps)
+    J <- rep(0, m)
     J[1] <- eps[1]
-    if(n >= 2) {
-      for (i in 2:n){
+    if(m >= 2) {
+      for (i in 2:m){
         J[i] <- max((1 - ei) * J[i - 1], ei * eps[i])
         }
       }
@@ -130,10 +140,10 @@ if(wait_dist == "stable") { # stable
   if(stability < 1){
     # stability < 1
     sigma <- (cos(pi * tail / 2)) ^ (1 / tail)
-    W <- stabledist::rstable(n, alpha = tail, beta = 1 , gamma = sigma,
+    W <- stabledist::rstable(m, alpha = tail, beta = 1 , gamma = sigma,
                              delta = 0, pm = 1)
   } else if(stability == 1){
-    W <- rep(1, n)
+    W <- rep(1, m)
   }
 
   }
@@ -146,7 +156,7 @@ if(wait_dist == "stable") { # stable
     if(stability > 1){
       sigma <- (stability - 1) / stability # stability > 1
     }
-    W <- ReIns::rpareto(n, shape = stability, scale = sigma)
+    W <- ReIns::rpareto(m, shape = stability, scale = sigma)
   }
 
 
@@ -156,10 +166,10 @@ if(wait_dist == "stable") { # stable
 
      if(stability < 1){
        tail <- stability
-       W <- MittagLeffleR::rml(n, tail = tail, scale = sigma )
+       W <- MittagLeffleR::rml(m, tail = tail, scale = sigma )
      }
      if(stability == 1){
-       W <- stats::rexp(n, rate = 1)
+       W <- stats::rexp(m, rate = 1)
      }
   }
   W <- wait_scale * W
