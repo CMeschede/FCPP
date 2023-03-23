@@ -104,7 +104,8 @@ optim_bts <- function(WW, distance_fct,
                            tryCatch(
                              stats::optim( par = c(t., e., s.), fn = function(x) {
                                do.call(
-                                 distance_fct, list(WW = WW, tail = x[1], ei = x[2], scale = x[3])
+                                 distance_fct, list(WW = WW * 100 / max(WW), # Umskalierung 
+                                                    tail = x[1], ei = x[2], scale = x[3])
                                )
                              },
                              lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
@@ -116,7 +117,7 @@ optim_bts <- function(WW, distance_fct,
                                                               error = function(x) NA )),
                          theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
                                                                error = function(x) NA )),
-                         sigma =  purrr::map_dbl(opt, ~tryCatch(.x$par[3],
+                         sigma =  purrr::map_dbl(opt, ~tryCatch(.x$par[3] * max(WW) / 100, # Rueckskalierung
                                                                 error = function(x) NA )),
                          value = purrr::map_dbl(opt, ~tryCatch(.x$value,
                                                                error = function(x) NA ))
