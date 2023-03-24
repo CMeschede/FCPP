@@ -91,38 +91,38 @@ optim_bts <- function(WW, distance_fct,
   )
   if(is.numeric(s)) {
     start <- start |> tidyr::crossing(
-       s = s
+      s = log(s)
     )
   } else {
     start <- start |> tidyr::crossing(
-      s = c(initial[2], mean(WW))
+      s = log(initial[2])
     )
   }
-
+  
   est <- dplyr::mutate(start,
                        opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
-                           tryCatch(
-                             stats::optim( par = c(t., e., s.), fn = function(x) {
-                               do.call(
-                                 distance_fct, list(WW = WW * 100 / max(WW), # Umskalierung 
-                                                    tail = x[1], ei = x[2], scale = x[3])
-                               )
-                             },
-                             lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
-                             method = method, ...),
-                             error = function(x) NA
-                           )
-                         }),
-                         beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
+                         tryCatch(
+                           stats::optim( par = c(t., e., s.), fn = function(x) {
+                             do.call(
+                               distance_fct, list(WW = WW, # Umskalierung 
+                                                  tail = x[1], ei = x[2], scale = exp(x[3]))
+                             )
+                           },
+                           lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
+                           method = method, ...),
+                           error = function(x) NA
+                         )
+                       }),
+                       beta = purrr::map_dbl(opt, ~tryCatch(.x$par[1],
+                                                            error = function(x) NA )),
+                       theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
+                                                             error = function(x) NA )),
+                       sigma =  purrr::map_dbl(opt, ~tryCatch(exp(.x$par[3]), # Rueckskalierung
                                                               error = function(x) NA )),
-                         theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
-                                                               error = function(x) NA )),
-                         sigma =  purrr::map_dbl(opt, ~tryCatch(.x$par[3] * max(WW) / 100, # Rueckskalierung
-                                                                error = function(x) NA )),
-                         value = purrr::map_dbl(opt, ~tryCatch(.x$value,
-                                                               error = function(x) NA ))
-    )
-    est <- dplyr::select(est, -opt)
-    est2 <- est[which.min(est$value), ]
-    return(est2)
+                       value = purrr::map_dbl(opt, ~tryCatch(.x$value,
+                                                             error = function(x) NA ))
+  )
+  est <- dplyr::select(est, -opt)
+  est2 <- est[which.min(est$value), ]
+  return(est2)
 }
