@@ -12,17 +12,18 @@
 #' @param ptail  P(JJ > u) = k/n (number of exceedances over number of observations)
 #' @param distance_fct  R-function calculating the distance between the asymptotic and empirical cdf
 #' @param rho known parameter
-#' @param t vector of starting values in \eqn{(0,1]} for the tail parameter
-#' @param e vector of starting values in \eqn{[0,1]} for the extremal index
+#' @param t vector of starting values in \eqn{(a_tail,1]} for the tail parameter
+#' @param e vector of starting values in \eqn{(a_ei,1]} for the extremal index
+#' @param s vector of starting values in \eqn{(0,\inf)} for the extremal index
 #' @param a_tail lowest possible estimation for the tail parameter
 #' @param a_ei lowest possible estimation for the extremal index
 #' @param method algorithm that is used by \code{stats::optim} to minimize the
 #' distance function
 #'
 #' @details
-#' All combinations of \code{e} and \code{t} are used as starting values
+#' All combinations of \code{e}, \code{t} and \code{s} are used as starting values
 #' to compute the minimum of \code{distance_fct}. The function is minimized
-#' using \code{stats::optim} and every combination \code{e} and \code{t}.
+#' using \code{stats::optim} and every combination \code{e}, \code{t} and \code{s}.
 #' The parameters corresponding to the lowest value found, are returned
 #' as estimation for \code{ei} and \code{tail}.
 #'
@@ -83,32 +84,37 @@ optim_bts <- function(WW, distance_fct,
   if(is.data.frame(WW) & length(WW) == 1) {
     WW <- dplyr::pull(WW)
   }
-  initial <- MittagLeffleR::logMomentEstimator(WW) # for the starting point of sigma
-  # initial[2] = sigma
+  # Starting points of beta (b) and theta (t):
   start <- tidyr::crossing(
     t = t,
     e = e
   )
+  # + starting points of sigma (s)
+  # logarithmized to expand the searching space from [0, inf) to (-inf, -inf)
   if(is.numeric(s)) {
     start <- start |> tidyr::crossing(
-      s = log(s)
+      s = log(s) # starting point if specified by the user
+    )
+  } else if(is.null(s)) {
+    # logMoment estimation for the Mittag-Leffler distribution
+    initial <- MittagLeffleR::logMomentEstimator(WW)
+    # initial[1] = tail parameter (beta); initial[2] = scale parameter (sigma)
+    start <- start |> tidyr::crossing(
+      s = log(initial[2]) # starting point if not specified by the user
     )
   } else {
-    start <- start |> tidyr::crossing(
-      s = log(initial[2])
-    )
+    stop("s should be a numeric vector")
   }
-  
   est <- dplyr::mutate(start,
                        opt = purrr::pmap(list(t, e, s), function(t., e., s.) {
                          tryCatch(
                            stats::optim( par = c(t., e., s.), fn = function(x) {
                              do.call(
-                               distance_fct, list(WW = WW, # Umskalierung 
+                               distance_fct, list(WW = WW,
                                                   tail = x[1], ei = x[2], scale = exp(x[3]))
                              )
                            },
-                           lower = c(a_tail, a_ei, 0), upper = c(1, 1, Inf),
+                           lower = c(a_tail, a_ei, -Inf), upper = c(1, 1, Inf),
                            method = method, ...),
                            error = function(x) NA
                          )
@@ -117,7 +123,7 @@ optim_bts <- function(WW, distance_fct,
                                                             error = function(x) NA )),
                        theta = purrr::map_dbl(opt, ~tryCatch(.x$par[2],
                                                              error = function(x) NA )),
-                       sigma =  purrr::map_dbl(opt, ~tryCatch(exp(.x$par[3]), # Rueckskalierung
+                       sigma =  purrr::map_dbl(opt, ~tryCatch(exp(.x$par[3]), # rescaling
                                                               error = function(x) NA )),
                        value = purrr::map_dbl(opt, ~tryCatch(.x$value,
                                                              error = function(x) NA ))
