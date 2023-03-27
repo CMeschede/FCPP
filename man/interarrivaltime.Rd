@@ -10,7 +10,7 @@ interarrivaltime(data)
 \item{data}{data frame with two columns}
 }
 \value{
-
+A vector that contains the inter-exceedance times
 }
 \description{
 Interarrivaltime

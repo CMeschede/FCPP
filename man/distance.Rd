@@ -38,7 +38,7 @@ The cumulative distribution function (c.d.f.) of the mixture distribution is giv
 \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
 (x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
 where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
-with tail-parameter \eqn{\beta <= 1} and sclae parameter scale parameter
+with tail-parameter \eqn{\beta <= 1} and scale parameter
 \eqn{\sigma* = \theta^{-1/\beta}\cdot \sigma > 0}
 (short notation \eqn{ML(\beta,\sigma*)}).
 The Cramer-von Mises distance between the e.c.d.f. \eqn{F_{n}} of \eqn{WW_1,\dots,WW_n}

@@ -3,7 +3,7 @@
 \name{optim}
 \alias{optim}
 \alias{optim_bt}
-\alias{optim_btr}
+\alias{optim_bts}
 \title{Optim function for known scale parameter}
 \usage{
 optim_bt(
@@ -18,19 +18,16 @@ optim_bt(
   method = "L-BFGS-B"
 )
 
-optim_btr(
+optim_bts(
   WW,
   distance_fct,
-  ptail = NULL,
-  type = 1,
   t = c(0.25, 0.55, 0.85),
   e = c(0.25, 0.55, 0.85),
-  r = NULL,
   s = NULL,
-  sstar = NULL,
   a_tail = 0.1,
   a_ei = 0.1,
-  method = "L-BFGS-B"
+  method = "L-BFGS-B",
+  ...
 )
 }
 \arguments{
@@ -42,9 +39,9 @@ optim_btr(
 
 \item{rho}{known parameter}
 
-\item{t}{vector of starting values in \eqn{(0,1]} for the tail parameter}
+\item{t}{vector of starting values in \eqn{(a_tail,1]} for the tail parameter}
 
-\item{e}{vector of starting values in \eqn{[0,1]} for the extremal index}
+\item{e}{vector of starting values in \eqn{(a_ei,1]} for the extremal index}
 
 \item{a_tail}{lowest possible estimation for the tail parameter}
 
@@ -52,6 +49,8 @@ optim_btr(
 
 \item{method}{algorithm that is used by \code{stats::optim} to minimize the
 distance function}
+
+\item{s}{vector of starting values in \eqn{(0,\inf)} for the extremal index}
 }
 \value{
 A tibble containing the estimation for
@@ -68,9 +67,9 @@ The function is using a grid of multiple initialization values
 for the extremal index and the tail parameter.
 }
 \details{
-All combinations of \code{e} and \code{t} are used as starting values
+All combinations of \code{e}, \code{t} and \code{s} are used as starting values
 to compute the minimum of \code{distance_fct}. The function is minimized
-using \code{stats::optim} and every combination \code{e} and \code{t}.
+using \code{stats::optim} and every combination \code{e}, \code{t} and \code{s}.
 The parameters corresponding to the lowest value found, are returned
 as estimation for \code{ei} and \code{tail}.
 }

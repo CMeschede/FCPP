@@ -20,3 +20,8 @@ A vector that contains the magnitudes
 \description{
 magnitudes
 }
+\examples{
+dat <- data_generation(20, 0.5, 0.5)
+magnitudes(dat)
+
+}

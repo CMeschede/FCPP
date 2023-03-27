@@ -123,7 +123,7 @@ arrivaltime <- function(data) {
 #' @return A vector that contains the magnitudes
 #' @export
 #'
-#' #' @examples
+#' @examples
 #' dat <- data_generation(20, 0.5, 0.5)
 #' magnitudes(dat)
 #'
@@ -145,7 +145,7 @@ magnitudes <- function(data) {
 #'
 #' @param data data frame with two columns
 #'
-#' @return
+#' @return A vector that contains the inter-exceedance times
 #' @export
 #'
 
