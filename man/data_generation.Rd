@@ -85,7 +85,17 @@ For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\rho}. For \eqn{
 the variance exists additionally.
 For the generation of the Pareto distribution the Package \code{ReIns} is used.
 
-For all three waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
+If \code{wait_dist = "shifted_pareto"}, the \code{stability} parameter \eqn{\alpha}
+has to be in \eqn{(0, 1]}.
+If \eqn{\alpha < 1}, the waiting times are as described as for \code{wait_dist = "pareto"},
+but are additively shifted by one. That shift leads to the special case of \code{stability = 1},
+where the waiting times are equidistant equal \eqn{\rho},
+since the shifted Pareto distribution converges in distribution to the
+degenerative dirac measure in \eqn{\rho}
+while the normal/unshifted Pareto distribution converges to the degenerative
+dirac measure in zero as \eqn{\alpha \to 1}.
+
+For all four waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
 it holds that they are in the domain of attraction of the stable distribution
 which is a positively skewed sum-stable distribution.
 
