@@ -8,8 +8,8 @@ thin(data, k = NULL, u = NULL)
 }
 \arguments{
 \item{data}{data.frame, tibble or matrix with two columns.
-In the first column are the event magnitudes (JJ) stored and
-in the second column are the corresponding waiting times (WW)
+The first column contains the event magnitudes (class "numeric") and
+in the second column contains teh corresponding waiting times (class "numeric")
 where the i-th waiting time is the time between the (i-1)-th
 and i-th event}
 
@@ -19,20 +19,21 @@ and i-th event}
 }
 \value{
 A tibble with two columns:
-the event values, that survived the thinning (newJJ) and
-the corresponding waiting time (newWW)
+\itemize{
+\item the exceedances \code{newJJ} and
+\item the corresponding waiting times \code{newWW}
+}
 }
 \description{
 This function returns all events that
-exceed a specified threshold from a tibble, a data.frame or a
-two-column matrix.
-Alternatively, the function can also return the k observations
-with the largest magnitudes.
+exceed a specified threshold \code{u} from a tibble, a data.frame or a
+two-column matrix \code{data}.
+Alternatively, the function can also return the \code{k} largest observations.
 }
 \examples{
-dat <- data_generation(20, 0.5, 0.5)
-dat
-thin(dat, k = 10)
-thin(dat, u = 1)
+data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+  thin(k = 100)
+data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+  thin(u = 100)
 
 }

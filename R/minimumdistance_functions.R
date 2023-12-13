@@ -6,80 +6,79 @@
 #' as parts.
 #' The sample \code{WW} may be return times of events of interests.
 #'
-#'@aliases distance distance_cm distance_cm1 and distance_cm2
-#'@param WW a vector or tibble (data.frame) with one column containing the
-#'positive valued sample
-#'@param tail tail parameter \eqn{\beta} of the Mittag-Leffler distribution
-#'@param ei extremal index / weighting \eqn{\theta}
-#'@param scale scale parameter \eqn{\sigma}
+#' @aliases      distance distance_cm distance_cm1 and distance_cm2
+#' @param WW     a vector or tibble (data.frame) with one column containing the
+#' positive valued sample
+#' @param tail   tail parameter \eqn{\beta} of the Mittag-Leffler distribution
+#' @param ei     extremal index / weighting \eqn{\theta}
+#' @param scale  scale parameter \eqn{\sigma}
 #'
 #'
-#'@details
+#' @details
 #' The cumulative distribution function (c.d.f.) of the mixture distribution is given as
-#'\deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
-#'(x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
-#'where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
-#'with tail-parameter \eqn{\beta <= 1} and scale parameter
-#'\eqn{\sigma* = \theta^{-1/\beta}\cdot \sigma > 0}
-#' (short notation \eqn{ML(\beta,\sigma*)}).
-#'The Cramer-von Mises distance between the e.c.d.f. \eqn{F_{n}} of \eqn{WW_1,\dots,WW_n}
-#'and the mixture distribution is then defined as
-#'\deqn{\Delta^{[CM]}(F_{n},F_{\beta,\theta,\sigma})
-#'=\int\limits_0^\infty(F_{n}(x)-F_{\beta,\theta,\sigma}(x))^2
-#'dF_{\beta,\theta,\sigma}(x)
-#'}
-#'\deqn{
-#'=\frac{1}{n}\sum\limits_{i=1}^n
+#' \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}(x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
+#' where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
+#' with tail parameter \eqn{\beta \le 1} and scale parameter
+#' \eqn{\sigma_* = \theta^{-1/\beta}\cdot \sigma > 0}
+#' (short notation \eqn{\text{ML}(\beta,\sigma_*)}).
+#' The Cramer-von Mises distance between the e.c.d.f. \eqn{F_{n}} of  \code{WW}
+#' and the mixture distribution is then defined as
+#' \deqn{
+#' \Delta^{[\text{CM}]}(F_{n},F_{\beta,\theta,\sigma})
+#' =\int\limits_0^\infty(F_{n}(x)-F_{\beta,\theta,\sigma}(x))^2
+#' \, \text{d} \, F_{\beta,\theta,\sigma}(x)
+#' }
+#' \deqn{
+#' =\dfrac{1}{n} \, \sum\limits_{i=1}^n
 #' \bigg(
-#' \frac{i-\frac{1}{2}}{n}
-#' -F_{\beta,\theta,\sigma}(t_{(i+1)})
+#' \dfrac{i-\frac{1}{2}}{n}
+#' - F_{\beta,\theta,\sigma}(t_{(i)})
 #' \bigg)^2 +
-#' \frac{1}{12n^2}+\frac{2}{3}(1-\theta)^3
-#'}
-#' where \eqn{n=}\code{length(WW)}.
-#' The function \code{distance_cm_mod1} and \code{distance_cm_mod2}
+#' \dfrac{1}{12n^2}+\dfrac{2}{3}(1-\theta)^3
+#' }
+#' where \eqn{n=}\code{length(WW)} and \eqn{t_{(1)} \le \dots \le t_{(n )}} the ordered sample.
+#' The functions \code{distance_cm_mod1} and \code{distance_cm_mod2}
 #' calculate two modified version of the Cramer-von Mises distance
 #' \deqn{
-#' \Delta^{[CMmod1]}(F_{n},F_{\beta,\theta,\sigma})
+#' \Delta^{[\text{CMmod1}]}(F_{n},F_{\beta,\theta,\sigma})
 #' =\int\limits_0^\infty(F_{n}(x)-F_{\beta,\theta,\sigma}(x))^2
-#' dF^*_{\beta,\theta,\sigma}(x)
+#' \, \text{d} \, F^*_{\beta,\theta,\sigma}(x)
 #' }
 #' \deqn{
-#'=\frac{1}{\theta}\frac{1}{n}\sum\limits_{i=1}^n
+#' =\dfrac{1}{\theta}\dfrac{1}{n} \, \sum\limits_{i=1}^n
 #' \bigg(
-#' \frac{i-\frac{1}{2}}{n}
-#' -F_{\beta,\theta,\sigma}(t_{(i+1)})
+#' \dfrac{i-\dfrac{1}{2}}{n}
+#' -F_{\beta,\theta,\sigma}(t_{(i)})
 #' \bigg)^2 +
-#' \frac{1}{12n^2}\frac{1}{\theta}+\frac{1}{3}\frac{(1-\theta)^3}{\theta}
-#'}
+#' \dfrac{1}{12n^2} \dfrac{1}{\theta} - \dfrac{1}{3} \dfrac{(1-\theta)^3}{\theta}
+#' }
 #' and
 #' \deqn{
-#' \Delta^{[CMmod2]}(F_{n},F_{\beta,\theta,\sigma})
+#' \Delta^{[\text{CMmod2}]}(F_{n},F_{\beta,\theta,\sigma})
 #' =\int\limits_0^\infty(\max\lbrace F_{n}(x),1-\theta\rbrace
 #' -F_{\beta,\theta,\sigma}(x))^2
-#' dF^*_{\beta,\theta,\sigma}(x)
+#' \, \text{d} \, F^*_{\beta,\theta,\sigma}(x)
 #' }
 #' \deqn{
-#'=\frac{1}{\theta^3}\frac{1}{n}\sum\limits_{i=
-#'\lceil n(1-\theta)\rceil+1}^n
+#' =\dfrac{1}{\theta^3}\dfrac{1}{n} \, \sum\limits_{i=
+#' \lceil n(1-\theta) \rceil + 1}^n
 #' \bigg(
-#' \frac{i-\frac{1}{2}}{n}
-#' -F_{\beta,\theta,\sigma}(t_{(i+1)})
+#' \dfrac{i-\dfrac{1}{2}}{n}
+#' - F_{\beta,\theta,\sigma}(t_{(i)})
 #' \bigg)^2 +
-#' \frac{n-\lceil n(1-\theta)\rceil}{12n^3\theta^3}
-#'}
-#'\deqn{
-#'-\frac{(n(1-\theta)^3)-\lceil n(1-\theta)\rceil^3}
-#'{3n^3\theta^3}
-#'+
-#'\frac{(n(1-\theta))^2-\lceil n(1-\theta)\rceil^2}
-#'{n^2\theta^3}
-#'F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil +1)})
-#'}
-#'\deqn{
-#'-\frac{n(1-\theta)-\lceil n(1-\theta)\rceil}{n\theta^3}
-#'F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil +1)})^2
-#'}
+#' \dfrac{n - \lceil n(1-\theta) \rceil}{12 n^3 \theta^3}
+#' }
+#' \deqn{
+#' - \dfrac{(n(1-\theta))^3- \lceil n (1 - \theta) \rceil^3}
+#' {3 n^3 \theta^3} +
+#' \dfrac{(n(1-\theta))^2-\lceil n(1-\theta)\rceil^2}
+#' {n^2 \theta^3}
+#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})
+#' }
+#' \deqn{
+#' -\dfrac{n (1-\theta) - \lceil n(1-\theta) \rceil}{n \theta^3}
+#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})^2
+#' }
 #' respectively.
 #'
 #' @name distance
@@ -182,80 +181,5 @@ distance_cm_mod3 <- function(WW, tail, ei, scale = 1) {
     ((0.5 - 1 / 3 * ei) * ei ^ 2)
   s <- (1 / ((0.5 - 1 / 3 * ei) * ei)) *
     sum((((sort(c(1 - ei, pmisch)) - pn) ^ 2) * weights))
-  return(s)
-}
-
-## minimum distance functions approximations
-
-#' @export
-distance_cm_approx <- function(WW, tail, ei, scale = 1) {
-  if(is.data.frame(WW) & length(WW) == 1) {
-    WW <- dplyr::pull(WW)
-  }
-  if(any(WW < 0)){
-    stop("WW (waiting times) should be positive values")
-  }
-  k <- length(WW) + 1
-  WW_sort <- sort(WW, decreasing  = F) # IETs
-  pn <- (0:(k - 1)) / k
-  pmls <- MittagLeffleR::pml(WW_sort, tail = tail, scale = ei ^ (-1 / tail) * scale)
-  pmisch <- (1 - ei) + ei * pmls
-  weights <- diff(c(0, pmls, 1))
-  s <- (1 - ei) ^ 3 + ei * sum((((c(1 - ei, pmisch) - pn) ^ 2) * weights))
-  return(s)
-}
-
-#' @export
-distance_cm_mod1_approx <- function(WW, tail, ei, scale = 1) {
-  if(is.data.frame(WW) & length(WW) == 1) {
-    WW <- dplyr::pull(WW)
-  }
-  if(any(WW < 0)){
-    stop("WW (waiting times) should be positive values")
-  }
-  k <- length(WW) + 1
-  WW_sort <- sort(WW, decreasing = F) # IETs
-  pn <- (0:(k - 1)) / k
-  pmls <- MittagLeffleR::pml(WW_sort, tail = tail, scale = ei ^ (-1 / tail) * scale)
-  pmisch <- (1 - ei) + ei * pmls
-  weights <- diff(c(0, pmls, 1))
-  s <- sum((((c(1 - ei, pmisch) - pn) ^ 2) * weights))
-  return(s)
-}
-
-#' @export
-distance_cm_mod2_approx <- function(WW, tail, ei, scale = 1) {
-  if(is.data.frame(WW) & length(WW) == 1) {
-    WW <- dplyr::pull(WW)
-  }
-  if(any(WW < 0)) {
-    stop("WW (waiting times) should be positive values")
-  }
-  k <- length(WW) + 1
-  WW_sort <- sort(WW, decreasing = F) # sorted IETs
-  pn <- (0:(k - 1)) / k
-  pmls <- MittagLeffleR::pml(WW_sort, tail = tail, scale = ei ^ (-1  /tail) * scale)
-  weights <- diff(c(0, pmls, 1))
-  s <- sum((c(0,pmls) -
-              pmax(0, pmin(1, (1 / ei * (pn - 1 + ei)))))  ^ 2  * weights)
-  return(s)
-}
-
-# not in the article:
-distance_cm_mod3_approx <- function(WW, tail, ei, scale = 1) {
-  if(is.data.frame(WW) & length(WW) == 1) {
-    WW <- dplyr::pull(WW)
-  }
-  if(any(WW < 0)){
-    stop("WW (waiting times) should be positive values")
-  }
-  k <- length(WW) + 1
-  WW_sort <- sort(WW, decreasing = F) # scaled IETs
-  pn <- (0:(k - 1)) / k
-  pmls <- MittagLeffleR::pml(WW_sort, tail = tail, scale = ei ^ (-1 / tail) * scale)
-  pmisch <- (1 - ei) + ei * pmls
-  weights <- diff(c(0, pmls, 1))
-  s <- (1 / ((0.5 - 1 / 3 * ei) * ei)) *
-    sum((((c(1 - ei, pmisch) - pn) ^ 2) * weights))
   return(s)
 }

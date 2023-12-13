@@ -1,12 +1,11 @@
 #' Data Generating Function
 #'
-#' Function that generates a marked point process \eqn{(JJ[i], WW[i]), i = 1,...,n}.
-#' The JJ[i] is the i-th mark and WW[i] is the waiting time between the (i-1)-th and
-#' i-th event. The marks (JJ[i]) form a MAR-process which is a stationary time series
-#' with extremal index \eqn{\theta \in (0,1]}.
+#' A tibble / data.frame with two columns \code{JJ} and \code{WW} where \code{JJ} are
+#' the marks / magnitudes and \code{WW} are the waiting times between the (i-1)-th and
+#' i-th event.
 #' The generated process fulfills all assumptions so that the inter-exceedance times (IETs)
-#' are asymptotically mixture distributed with the dirac measure at point zero and the
-#' Mittag-Leffler distribution as parts.
+#' regarding a threshold \eqn{u} are asymptotically mixture distributed with the
+#' dirac measure at point zero and the Mittag-Leffler distribution as parts.
 #' The IETs are the times between two consequtive extremes which are identified
 #' by the peak-over-threshold (POT) method.
 #'
@@ -14,22 +13,32 @@
 #' @param ei extremal index \eqn{\theta \in (0,1]}
 #' @param stability stability parameter \eqn{\alpha > 0}
 #' used for the waiting time distribution (see 'Details')
-#' @param wait_scale scale parameter of the waiting time distribution \eqn{\rho > 0}.
-#' Default \code{wait_scale = 1}.
-#' @param wait_dist distribution of the waiting times WW (see 'Details')
-#' @param u threshold  (default NULL); if u is numeric, it holds JJ[1] > u
+#' @param scale0 scale parameter \eqn{\rho > 0} of the waiting time distribution.
+#' Default \code{scale0 = 1}
+#' @param wait_dist distribution of the waiting times \code{WW} (see 'Details')
+#' @param u threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
+#' and the length of the data.frame is \code{n + 1}
+#'
+#' @return
+#' A tibble with two columns
+#'
+#' -  \code{JJ} a stationary MAR-process with extremal index \code{ei}
+#'
+#' -  \code{WW} independent waiting times with stability parameter \code{stability}
+#' and scale parameter \code{scale0}
 #'
 #' @details
-#' The event magnitudes/ marks (JJ) form a max-autoregressive(MAR)-process.
+#' The marks \code{JJ} form a max-autoregressive process (MAR) which is a
+#' stationary time series with extremal index \eqn{\theta \in (0,1]}.
 #' This process is stationary with extremal index \eqn{\theta}.
 #'
-#' The waiting times (WWs) are i.i.d. and stochastically independent to the
-#' event magnitudes (JJ).
-#' The waiting time distribution can be chosen as "\code{stable}", "\code{ML}" or
-#' "\code{pareto}".
+#' The waiting times \code{WW} are i.i.d. and stochastically independent to the
+#' marks \code{JJ}.
+#' The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
+#' "\code{pareto}" or "\code{shifted_pareto}".
 #'
-#' If \code{wait_dist = "stable"}, the \code{stability} parameter \eqn{\alpha} has to be in
-#' the interval (0,1].
+#' If \code{wait_dist = "stable"}, the \code{stability} parameter \eqn{\alpha}
+#' has to be in the interval (0,1].
 #' In case of \eqn{\alpha < 1}, the WWs are stable distributed with stability parameter \eqn{\alpha}.
 #' Then, the distribution is heavy-tailed in the sense that mean and variance do
 #' not exist.
@@ -48,11 +57,11 @@
 #' the package \code{MittagLeffleR} is used.
 #'
 #' If \code{wait_dist = "pareto"}, the \code{stability} parameter \eqn{\alpha}
-#' has to be in \eqn{(0, \infty)/{1}}.
+#' has to be in \eqn{(0, \infty)/ \{1 \}}.
 #' If \eqn{\alpha < 1}, a Pareto distribution with shape parameter \eqn{\alpha}
-#' and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} * \rho} is used.
+#' and scale parameter \eqn{(1/(\Gamma(1-\alpha))^{1/\alpha} \cdot \rho} is used.
 #' Then the distribution is heavy-tailed in the sense that mean and variance do not exist.
-#' If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha * \rho}.
+#' If \eqn{\alpha > 1}, the scale parameter becomes \eqn{(\alpha-1)/\alpha \cdot \rho}.
 #' For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\rho}. For \eqn{\alpha > 2}
 #' the variance exists additionally.
 #' For the generation of the Pareto distribution the Package \code{ReIns} is used.
@@ -71,53 +80,44 @@
 #' it holds that they are in the domain of attraction of the stable distribution
 #' which is a positively skewed sum-stable distribution.
 #'
-#' The generated process (JJ,WW) fulfills all assumptions so that the inter-exceedance times (IETs)
+#' The generated process \code{(JJ,WW)} is a marked point process and fulfills all assumptions so that the inter-exceedance times (IETs)
 #' are asymptotically mixture distributed with the dirac measure at point zero and the
 #' Mittag-Leffler distribution as parts.
-#' The IETs are the times between two consecutive extremes which are identified
-#' by the peak-over-threshold (POT) method.
 #'
-#' @return
-#' A tibble with two columns
-#'
-#' \code{JJ} a stationary MAR-process with extremal index \code{ei}
-#'
-#' \code{WW} independent waiting times with stability parameter \code{stability}
-#' and scale parameter \code{wait_scale}
 #'
 #' @export
 #'
 #' @examples
-#' dat <- data_generation(20, 0.5, 0.5)
+#' dat <- data_generation(n = 1000, stability = 0.9, ei = 0.8)
 #' dat
-#' dat2 <- data_generation(15, 0.2, 0.85, wait_dist = "pareto")
+#' dat2 <- data_generation(n = 200, stability = 1, ei = 0.7, scale0 = 2, wait_dist = "pareto")
 #' dat2
 
 
-data_generation <- function(n, stability = 1, ei = 1, wait_scale = 1,
+data_generation <- function(n, stability = 1, ei = 1, scale0 = 1,
                             wait_dist = "stable", u = NULL) {
   ## input control:
   # 'n' number of observations
   if(!isTRUE(all.equal(n , round(n))) || length(n) != 1)
-    stop("sample size has to be an integer")
+    stop("The sample size has to be an integer.")
   # 'ei'/ true parameter theta in (0,1]
   if(ei <= 0 || ei > 1 || length(ei) != 1)
     stop("Extremal index ei should be a single value in (0,1].")
   # 'wait_dist' distribution of waiting times
   if(! (wait_dist %in% c("stable", "ML", "pareto", "shifted_pareto")) ||
      length(wait_dist) != 1 )
-    stop("wait_dist should be one of following characters: stable, ML, pareto, shifted_pareto")
+    stop("wait_dist should be one of following characters: stable, ML, pareto, shifted_pareto.")
   # 'stability'/ true stability parameter alpha > 0
   if(stability <= 0 || length(stability) != 1)
     stop("Stability parameter should be a single positiv value.")
   # stability larger 1 only for Pareto
   if(!(wait_dist == "pareto") & stability > 1)
     stop("A stability parameter larger than 1 is only implemented within the use
-         of Pareto distributed waiting times (without a shift)")
+         of Pareto distributed waiting times (without a shift).")
   if(wait_dist == "pareto" & stability == 1)
     stop("The special case of pareto waiting times with stability parameter equals
          one is unfortunately not implemented, yet.
-         Please, choose a stability parameter smaller or larger than one")
+         Please, choose a stability parameter smaller or larger than one.")
   if(stability <= 1) {
     tail <- stability
   } else {
@@ -189,6 +189,6 @@ if(wait_dist == "stable") { # stable
        W <- stats::rexp(m, rate = 1)
      }
   }
-  W <- wait_scale * W
+  W <- scale0 * W
   return(tibble::tibble(JJ = J, WW = W))
 }

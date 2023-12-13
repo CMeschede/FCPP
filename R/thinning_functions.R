@@ -1,14 +1,13 @@
 #' Thinning function
 #'
 #' This function returns all events that
-#' exceed a specified threshold from a tibble, a data.frame or a
-#' two-column matrix.
-#' Alternatively, the function can also return the k observations
-#' with the largest magnitudes.
+#' exceed a specified threshold \code{u} from a tibble, a data.frame or a
+#' two-column matrix \code{data}.
+#' Alternatively, the function can also return the \code{k} largest observations.
 #'
 #' @param data data.frame, tibble or matrix with two columns.
-#' In the first column are the event magnitudes (JJ) stored and
-#' in the second column are the corresponding waiting times (WW)
+#' The first column contains the event magnitudes (class "numeric") and
+#' in the second column contains teh corresponding waiting times (class "numeric")
 #' where the i-th waiting time is the time between the (i-1)-th
 #' and i-th event
 #' @param k number of exceedances
@@ -16,15 +15,15 @@
 #'
 #' @return
 #' A tibble with two columns:
-#' the event values, that survived the thinning (newJJ) and
-#' the corresponding waiting time (newWW)
+#' -  the exceedances \code{newJJ} and
+#' -  the corresponding waiting times \code{newWW}
 #' @export
 #'
 #' @examples
-#' dat <- data_generation(20, 0.5, 0.5)
-#' dat
-#' thin(dat, k = 10)
-#' thin(dat, u = 1)
+#' data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+#'   thin(k = 100)
+#' data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+#'   thin(u = 100)
 #'
 
 
@@ -34,19 +33,34 @@ thin <- function(data, k = NULL, u = NULL) {
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
   }
-  if(dim(data)[2] != 2) {
-    stop("'data' should be a matrix, tibble or data.frame with two columns ")
-  }
+
   data <- as.matrix(data)
   JJ <- data[, 1]
   WW <- data[, 2]
-  n <- length(JJ)
-  if(any(WW <= 0)) {
-    stop("the second column of 'data' should contain the waiting times being
-         greater than zero")
+
+  if(anyNA(WW)) {
+    JJ <- JJ[!is.na(WW)]
+    WW <- WW[!is.na(WW)]
+    warning("The second column contains missing values (NA). These entries have been deleted.")
   }
+  if(any(WW <= 0)) {
+    stop("The second column of 'data' should contain the waiting times being
+         greater than zero.")
+  }
+  if(anyNA(JJ)) {
+    ind <- which(is.na(JJ))
+    for(i in seq_along(ind)) {
+      WW[ind[i] + 1] <- WW[ind[i] + 1] + WW[ind[i]]
+    }
+    WW <- WW[-ind]
+    JJ <- JJ[-ind]
+    warning("The first column contains missing values (NA). These entries have been deleted
+            and the corresponding waiting times has been added to the next observation.")
+  }
+  n <- length(JJ)
+
   if(is.null(k) & is.null(u)) {
-    stop("Input of arguments k and u are missing. You have to set at least one
+    stop("Input of arguments k and u are missing. You have to set exactly one
          of both.")
   } else if(!is.null(k) & !is.null(u)) {
     k_1 <- sum(JJ > u)
@@ -65,7 +79,7 @@ thin <- function(data, k = NULL, u = NULL) {
   if(k > n) {
     stop("Can't threshold to ", k, " exceedances if I only have ", n, " observations.")
   }
-  idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) #Index of the k highest events
+  idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) # Index of the k highest events
   b <- rep(0, times = n)
   b[idxJ + 1] <- 1
   b <- b[1:n]
@@ -79,20 +93,24 @@ thin <- function(data, k = NULL, u = NULL) {
   return(out)
 }
 
-#' Arrivaltime
+#' Arrivaltimes
 #'
 #' This function transforms a tibble, a data.frame or a
-#' two-column matrix of event values and waiting times for the
-#' next event to a vector containing the total waiting times
-#' for the respective events.
+#' two-column matrix of event magnitudes and waiting times to a vector that
+#' contains the cumulative waiting times till the i-th event.
 #'
-#' @param data dataframe with two columns
+#' @param data data.frame, tibble or matrix with two columns.
+#' The first column contains the event magnitudes (class "numeric") and
+#' in the second column contains the corresponding waiting times (class "numeric")
+#' where the i-th waiting time is the time between the (i-1)-th
+#' and i-th event
 #'
-#' @return A vector that contains the arrivaltimes
+#' @return A vector that contains the arrivaltimes.
 #' @export
 #'
 #' @examples
-#' dat <- data_generation(20, 0.5, 0.5)
+#' dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+#'   thin(k = 100)
 #' arrivaltime(dat)
 #'
 
@@ -100,9 +118,6 @@ arrivaltime <- function(data) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
-  }
-  if(dim(data)[2] != 2) {
-    stop("'data' should be a matrix, tibble or data.frame with two columns ")
   }
   data <- as.matrix(data)
   WW <- data[, 2]
@@ -112,19 +127,21 @@ arrivaltime <- function(data) {
 
 #' magnitudes
 #'
-#' @param data dataframe with two columns
+#' This function extracts the event magnitudes of a tibble, a data.frame or a
+#' two-column matrix of event magnitudes and waiting times.
 #'
-#' This function transforms a tibble, a data.frame or a
-#' two-column matrix of event values and waiting times for the
-#' next event to a vector containing the magnitudes
-#' for the respective events.
+#' @param data data.frame, tibble or matrix with two columns.
+#' The first column contains the event magnitudes (class "numeric") and
+#' in the second column contains the corresponding waiting times (class "numeric")
+#' where the i-th waiting time is the time between the (i-1)-th
+#' and i-th event
 #'
-#'
-#' @return A vector that contains the magnitudes
+#' @return A vector that contains the magnitudes.
 #' @export
 #'
 #' @examples
-#' dat <- data_generation(20, 0.5, 0.5)
+#' dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+#'   thin(k = 100)
 #' magnitudes(dat)
 #'
 
@@ -133,9 +150,6 @@ magnitudes <- function(data) {
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
   }
-  if(dim(data)[2] != 2) {
-    stop("'data' should be a matrix, tibble or data.frame with two columns ")
-  }
   data <- as.matrix(data)
   JJ <- data[, 1]
   return(JJ)
@@ -143,18 +157,27 @@ magnitudes <- function(data) {
 
 #' Interarrivaltime
 #'
-#' @param data data frame with two columns
+#' This function extracts the waiting times / interarrivaltimes of a tibble, a data.frame or a
+#' two-column matrix of event magnitudes and waiting times.
 #'
-#' @return A vector that contains the inter-exceedance times
+#' @param data data.frame, tibble or matrix with two columns.
+#' The first column contains the event magnitudes (class "numeric") and
+#' in the second column contains the corresponding waiting times (class "numeric")
+#' where the i-th waiting time is the time between the (i-1)-th
+#' and i-th event
+#'
+#' @return A vector that contains the interarrivaltimes.
 #' @export
+#'
+#' @examples
+#' dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+#'   thin(k = 100)
+#' interarrival(dat)
 #'
 
 interarrivaltime <- function(data) {
   # input control
   if(length(dim(data)) != 2) {
-    stop("'data' should be a matrix, tibble or data.frame with two columns")
-  }
-  if(dim(data)[2] != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
   }
   data <- as.matrix(data)
@@ -163,3 +186,5 @@ interarrivaltime <- function(data) {
   WW <- WW[-1] # first time excluded since it is not a time between two exceedances
   return(WW)
 }
+
+

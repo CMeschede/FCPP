@@ -2,24 +2,28 @@
 % Please edit documentation in R/thinning_functions.R
 \name{arrivaltime}
 \alias{arrivaltime}
-\title{Arrivaltime}
+\title{Arrivaltimes}
 \usage{
 arrivaltime(data)
 }
 \arguments{
-\item{data}{dataframe with two columns}
+\item{data}{data.frame, tibble or matrix with two columns.
+The first column contains the event magnitudes (class "numeric") and
+in the second column contains the corresponding waiting times (class "numeric")
+where the i-th waiting time is the time between the (i-1)-th
+and i-th event}
 }
 \value{
-A vector that contains the arrivaltimes
+A vector that contains the arrivaltimes.
 }
 \description{
 This function transforms a tibble, a data.frame or a
-two-column matrix of event values and waiting times for the
-next event to a vector containing the total waiting times
-for the respective events.
+two-column matrix of event magnitudes and waiting times to a vector that
+contains the cumulative waiting times till the i-th event.
 }
 \examples{
-dat <- data_generation(20, 0.5, 0.5)
+dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+  thin(k = 100)
 arrivaltime(dat)
 
 }

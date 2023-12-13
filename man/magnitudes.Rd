@@ -7,21 +7,22 @@
 magnitudes(data)
 }
 \arguments{
-\item{data}{dataframe with two columns
-
-This function transforms a tibble, a data.frame or a
-two-column matrix of event values and waiting times for the
-next event to a vector containing the magnitudes
-for the respective events.}
+\item{data}{data.frame, tibble or matrix with two columns.
+The first column contains the event magnitudes (class "numeric") and
+in the second column contains the corresponding waiting times (class "numeric")
+where the i-th waiting time is the time between the (i-1)-th
+and i-th event}
 }
 \value{
-A vector that contains the magnitudes
+A vector that contains the magnitudes.
 }
 \description{
-magnitudes
+This function extracts the event magnitudes of a tibble, a data.frame or a
+two-column matrix of event magnitudes and waiting times.
 }
 \examples{
-dat <- data_generation(20, 0.5, 0.5)
+dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+  thin(k = 100)
 magnitudes(dat)
 
 }

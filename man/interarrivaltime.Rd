@@ -7,11 +7,22 @@
 interarrivaltime(data)
 }
 \arguments{
-\item{data}{data frame with two columns}
+\item{data}{data.frame, tibble or matrix with two columns.
+The first column contains the event magnitudes (class "numeric") and
+in the second column contains the corresponding waiting times (class "numeric")
+where the i-th waiting time is the time between the (i-1)-th
+and i-th event}
 }
 \value{
-A vector that contains the inter-exceedance times
+A vector that contains the interarrivaltimes.
 }
 \description{
-Interarrivaltime
+This function extracts the waiting times / interarrivaltimes of a tibble, a data.frame or a
+two-column matrix of event magnitudes and waiting times.
+}
+\examples{
+dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
+  thin(k = 100)
+interarrival(dat)
+
 }
