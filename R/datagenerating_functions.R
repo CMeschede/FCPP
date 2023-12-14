@@ -15,7 +15,9 @@
 #' used for the waiting time distribution (see 'Details')
 #' @param scale0 scale parameter \eqn{\rho > 0} of the waiting time distribution.
 #' Default \code{scale0 = 1}
-#' @param wait_dist distribution of the waiting times \code{WW} (see 'Details')
+#' @param wait_dist distribution of the waiting times \code{WW}.
+#' The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
+#' "\code{pareto}" or "\code{shifted_pareto}". (see 'Details')
 #' @param u threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 #' and the length of the data.frame is \code{n + 1}
 #'
