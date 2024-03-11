@@ -165,6 +165,7 @@ magnitudes <- function(data) {
 #' in the second column contains the corresponding waiting times (class "numeric")
 #' where the i-th waiting time is the time between the (i-1)-th
 #' and i-th event
+#' @param skip_first logical; if TRUE, the first entry will be deleted.
 #'
 #' @return A vector that contains the interarrivaltimes.
 #' @export
@@ -172,18 +173,19 @@ magnitudes <- function(data) {
 #' @examples
 #' dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
 #'   thin(k = 100)
-#' interarrival(dat)
+#' interarrivaltime(dat)
 #'
 
-interarrivaltime <- function(data) {
+interarrivaltime <- function(data, skip_first = T) {
   # input control
   if(length(dim(data)) != 2) {
     stop("'data' should be a matrix, tibble or data.frame with two columns")
   }
   data <- as.matrix(data)
-  JJ <- data[, 1]
   WW <- data[, 2]
-  WW <- WW[-1] # first time excluded since it is not a time between two exceedances
+  if(skip_first == TRUE) {
+    WW <- WW[-1] # first time excluded
+  }
   return(WW)
 }
 
