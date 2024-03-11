@@ -50,6 +50,8 @@ can be chosen from \link{distance_cm}, \link{distance_cm_mod1} and \link{distanc
 \item{method}{algorithm that is used by \code{stats::optim} to minimize the
 distance function}
 
+\item{...}{Additional parameters passed on to \link{optim}}
+
 \item{ptail}{probability of exceeding P(JJ > u) = \eqn{p(u)}}
 
 \item{scale0}{scaling parameter \eqn{\rho}}

@@ -20,6 +20,7 @@
 #' @param a_ei lowest possible estimation for the extremal index
 #' @param method algorithm that is used by \code{stats::optim} to minimize the
 #' distance function
+#' @param ... Additional parameters passed on to [optim]
 #'
 #'
 #' @details

@@ -92,7 +92,7 @@
 #' @examples
 #' dat <- data_generation(n = 1000, stability = 0.9, ei = 0.8)
 #' dat
-#' dat2 <- data_generation(n = 200, stability = 1, ei = 0.7, scale0 = 2, wait_dist = "pareto")
+#' dat2 <- data_generation(n = 200, stability = 1, ei = 0.7, scale0 = 2, wait_dist = "ML")
 #' dat2
 
 

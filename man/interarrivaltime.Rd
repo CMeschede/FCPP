@@ -4,7 +4,7 @@
 \alias{interarrivaltime}
 \title{Interarrivaltime}
 \usage{
-interarrivaltime(data)
+interarrivaltime(data, skip_first = T)
 }
 \arguments{
 \item{data}{data.frame, tibble or matrix with two columns.
@@ -12,6 +12,8 @@ The first column contains the event magnitudes (class "numeric") and
 in the second column contains the corresponding waiting times (class "numeric")
 where the i-th waiting time is the time between the (i-1)-th
 and i-th event}
+
+\item{skip_first}{logical; if TRUE, the first entry will be deleted.}
 }
 \value{
 A vector that contains the interarrivaltimes.
@@ -23,6 +25,6 @@ two-column matrix of event magnitudes and waiting times.
 \examples{
 dat <- data_generation(n = 10000, stability = 0.9, ei = 0.7, wait_dist = "ML") |>
   thin(k = 100)
-interarrival(dat)
+interarrivaltime(dat)
 
 }
