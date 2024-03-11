@@ -54,7 +54,7 @@
 #' }
 #' and
 #' \deqn{
-#' \Delta^{[\text{CMmod2}]}(F_{n},F_{\beta,\theta,\sigma})
+#' \Delta^{[\text{CMmod2}]}( \tilde{F}_{n}, F_{\beta,\theta,\sigma} )
 #' =\int\limits_0^\infty(\max\lbrace F_{n}(x),1-\theta\rbrace
 #' -F_{\beta,\theta,\sigma}(x))^2
 #' \, \text{d} \, F^*_{\beta,\theta,\sigma}(x)
@@ -64,7 +64,7 @@
 #' \lceil n(1-\theta) \rceil + 1}^n
 #' \bigg(
 #' \dfrac{i-\dfrac{1}{2}}{n}
-#' - F_{\beta,\theta,\sigma}(t_{(i)})
+#' - F_{\beta,\theta,\sigma}(t_{(i)} + 1)
 #' \bigg)^2 +
 #' \dfrac{n - \lceil n(1-\theta) \rceil}{12 n^3 \theta^3}
 #' }
@@ -73,13 +73,13 @@
 #' {3 n^3 \theta^3} +
 #' \dfrac{(n(1-\theta))^2-\lceil n(1-\theta)\rceil^2}
 #' {n^2 \theta^3}
-#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})
+#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)} + 1)
 #' }
 #' \deqn{
 #' -\dfrac{n (1-\theta) - \lceil n(1-\theta) \rceil}{n \theta^3}
-#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})^2
+#' F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)} + 1)^2
 #' }
-#' respectively.
+#' respectively, where \eqn{\tilde{F}_n} is the e.c.d.f. of the by shift one transformated observations \eqn{t_1 + 1, \ldots, t_n + 1}.
 #'
 #' @name distance
 
@@ -133,6 +133,7 @@ distance_cm_mod2 <- function(WW, tail, ei, scale = 1) {
   if(any(WW < 0)){
     stop("WW (waiting times) should be positive values")
   }
+  WW <- WW + 1
   kstar <- length(WW) # number of IETs
   k <- kstar + 1 # number of exceedances
   WW_sort <- sort(WW, decreasing = F) # IETs
