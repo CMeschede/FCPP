@@ -58,7 +58,7 @@ The c.d.f. of the mixture distribution is given by
 + \theta F^*_{\beta,\sigma_*}(x),}
 where \eqn{F^*} is the c.d.f. of the Mittag-Leffler distribution.
 For clarification, \eqn{\sigma} corresponds to the input \code{scale} and
-\eqn{\sigma_*=\theta^{1/\beta} \sigma}.
+\eqn{\sigma_*=\theta^{-1/\beta} \sigma}.
 }
 \examples{
 rmixdistr(n = 10, tail = 0.8, ei = 0.5)
