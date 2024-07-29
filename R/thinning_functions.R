@@ -79,6 +79,15 @@ thin <- function(data, k = NULL, u = NULL) {
   if(k > n) {
     stop("Can't threshold to ", k, " exceedances if I only have ", n, " observations.")
   }
+  k0 <- k
+  while(sort(JJ, decreasing = T)[k] == sort(JJ, decreasing = T)[k+1]) {
+    k <- k + 1
+  }
+  if(k0 != k) {
+    warning("The ", k0, "-th and ", k0 + 1, "-th greatest magnitudes have the same value.
+            All magnitudes equal or greater than ", sort(JJ, decreasing = T)[k], " are kept.
+            Thus, you have ", k, " exceedances." )
+  }
   idxJ <- sort(order(JJ, decreasing = TRUE)[1:k]) # Index of the k highest events
   b <- rep(0, times = n)
   b[idxJ + 1] <- 1
