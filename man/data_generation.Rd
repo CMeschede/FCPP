@@ -26,7 +26,7 @@ Default \code{scale0 = 1}}
 
 \item{wait_dist}{distribution of the waiting times \code{WW}.
 The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
-"\code{pareto}" or "\code{shifted_pareto}". (see 'Details')}
+or "\code{pareto}". (see 'Details')}
 
 \item{u}{threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 and the length of the data.frame is \code{n + 1}}
@@ -57,7 +57,7 @@ This process is stationary with extremal index \eqn{\theta}.
 The waiting times \code{WW} are i.i.d. and stochastically independent to the
 marks \code{JJ}.
 The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
-"\code{pareto}" or "\code{shifted_pareto}".
+or "\code{pareto}".
 
 If \code{wait_dist = "stable"}, the \code{stability} parameter \eqn{\alpha}
 has to be in the interval (0,1].
@@ -88,21 +88,11 @@ For \eqn{\alpha > 1}, the expected value exists and equals \eqn{\rho}. For \eqn{
 the variance exists additionally.
 For the generation of the Pareto distribution the Package \code{ReIns} is used.
 
-If \code{wait_dist = "shifted_pareto"}, the \code{stability} parameter \eqn{\alpha}
-has to be in \eqn{(0, 1]}.
-If \eqn{\alpha < 1}, the waiting times are as described as for \code{wait_dist = "pareto"},
-but are additively shifted by one. That shift leads to the special case of \code{stability = 1},
-where the waiting times are equidistant equal \eqn{\rho},
-since the shifted Pareto distribution converges in distribution to the
-degenerative dirac measure in \eqn{\rho}
-while the normal/unshifted Pareto distribution converges to the degenerative
-dirac measure in zero as \eqn{\alpha \to 1}.
-
-For all four waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
+For all three waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
 it holds that they are in the domain of attraction of the stable distribution
 which is a positively skewed sum-stable distribution.
 
-The generated process \code{(JJ,WW)} is a marked point process and fulfills all assumptions so that the inter-exceedance times (IETs)
+The generated process \code{(JJ,WW)} is a marked point process and fulfills all assumptions so that the interexceedance times (IETs)
 are asymptotically mixture distributed with the dirac measure at point zero and the
 Mittag-Leffler distribution as parts.
 }

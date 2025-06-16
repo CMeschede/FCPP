@@ -17,7 +17,7 @@
 #' Default \code{scale0 = 1}
 #' @param wait_dist distribution of the waiting times \code{WW}.
 #' The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
-#' "\code{pareto}" or "\code{shifted_pareto}". (see 'Details')
+#' or "\code{pareto}". (see 'Details')
 #' @param u threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 #' and the length of the data.frame is \code{n + 1}
 #'
@@ -37,7 +37,7 @@
 #' The waiting times \code{WW} are i.i.d. and stochastically independent to the
 #' marks \code{JJ}.
 #' The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
-#' "\code{pareto}" or "\code{shifted_pareto}".
+#' or "\code{pareto}".
 #'
 #' If \code{wait_dist = "stable"}, the \code{stability} parameter \eqn{\alpha}
 #' has to be in the interval (0,1].
@@ -68,21 +68,11 @@
 #' the variance exists additionally.
 #' For the generation of the Pareto distribution the Package \code{ReIns} is used.
 #'
-#' If \code{wait_dist = "shifted_pareto"}, the \code{stability} parameter \eqn{\alpha}
-#' has to be in \eqn{(0, 1]}.
-#' If \eqn{\alpha < 1}, the waiting times are as described as for \code{wait_dist = "pareto"},
-#' but are additively shifted by one. That shift leads to the special case of \code{stability = 1},
-#' where the waiting times are equidistant equal \eqn{\rho},
-#' since the shifted Pareto distribution converges in distribution to the
-#' degenerative dirac measure in \eqn{\rho}
-#' while the normal/unshifted Pareto distribution converges to the degenerative
-#' dirac measure in zero as \eqn{\alpha \to 1}.
-#'
-#' For all four waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
+#' For all three waiting time distributions with \code{stability} parameter \eqn{\alpha < 1}
 #' it holds that they are in the domain of attraction of the stable distribution
 #' which is a positively skewed sum-stable distribution.
 #'
-#' The generated process \code{(JJ,WW)} is a marked point process and fulfills all assumptions so that the inter-exceedance times (IETs)
+#' The generated process \code{(JJ,WW)} is a marked point process and fulfills all assumptions so that the interexceedance times (IETs)
 #' are asymptotically mixture distributed with the dirac measure at point zero and the
 #' Mittag-Leffler distribution as parts.
 #'
@@ -106,16 +96,16 @@ data_generation <- function(n, stability = 1, ei = 1, scale0 = 1,
   if(ei <= 0 || ei > 1 || length(ei) != 1)
     stop("Extremal index ei should be a single value in (0,1].")
   # 'wait_dist' distribution of waiting times
-  if(! (wait_dist %in% c("stable", "ML", "pareto", "shifted_pareto")) ||
+  if(! (wait_dist %in% c("stable", "ML", "pareto")) ||
      length(wait_dist) != 1 )
-    stop("wait_dist should be one of following characters: stable, ML, pareto, shifted_pareto.")
+    stop("wait_dist should be one of following characters: stable, ML, pareto.")
   # 'stability'/ true stability parameter alpha > 0
   if(stability <= 0 || length(stability) != 1)
     stop("Stability parameter should be a single positiv value.")
   # stability larger 1 only for Pareto
   if(!(wait_dist == "pareto") & stability > 1)
     stop("A stability parameter larger than 1 is only implemented within the use
-         of Pareto distributed waiting times (without a shift).")
+         of Pareto distributed waiting times.")
   if(wait_dist == "pareto" & stability == 1)
     stop("The special case of pareto waiting times with stability parameter equals
          one is unfortunately not implemented, yet.
@@ -170,26 +160,17 @@ if(wait_dist == "stable") { # stable
     W <- ReIns::rpareto(m, shape = stability, scale = sigma)
   }
 
-  if(wait_dist == "shifted_pareto") { # pareto
+  if(wait_dist == "ML") { # Mittag-Leffler distribution
+     # stability = tail < 1
+    sigma <- 1
 
     if(stability < 1){
       tail <- stability
-      sigma <- (1 / gamma(1 - tail)) ^ (1 / tail) # stability < 1
-      W <- ReIns::rpareto(m, shape = stability, scale = sigma) + 1
+      W <- MittagLeffleR::rml(m, tail = tail, scale = sigma )
     }
-  }
-
-    if(wait_dist == "ML") { # Mittag-Leffler distribution
-     # stability = tail < 1
-       sigma <- 1
-
-     if(stability < 1){
-       tail <- stability
-       W <- MittagLeffleR::rml(m, tail = tail, scale = sigma )
-     }
-     if(stability == 1){
-       W <- stats::rexp(m, rate = 1)
-     }
+    if(stability == 1){
+      W <- stats::rexp(m, rate = 1)
+    }
   }
   W <- scale0 * W
   return(tibble::tibble(JJ = J, WW = W))
