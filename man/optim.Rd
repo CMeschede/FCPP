@@ -3,6 +3,7 @@
 \name{optim}
 \alias{optim}
 \alias{optim_bts}
+\alias{optim_btr}
 \alias{optim_bt}
 \title{Optimization functions for known and unknown scale parameter}
 \usage{
@@ -16,6 +17,20 @@ optim_bts(
   a_ei = 0.1,
   method = "L-BFGS-B",
   ...
+)
+
+optim_btr(
+  WW,
+  distance_fct,
+  ptail,
+  t = c(0.25, 0.55, 0.85),
+  e = c(0.25, 0.55, 0.85),
+  s0 = NULL,
+  a_tail = 0.1,
+  a_ei = 0.1,
+  a_scale0 = 0.05,
+  b_scale0 = Inf,
+  method = "L-BFGS-B"
 )
 
 optim_bt(
@@ -37,9 +52,9 @@ positive valued sample}
 \item{distance_fct}{Cramér-von Mises distance function calculating the distance between the asymptotic and empirical cdf;
 can be chosen from \link{distance_cm}, \link{distance_cm_mod1} and \link{distance_cm_mod2}}
 
-\item{t}{vector of starting values in (\code{a_tail},1] for the tail parameter \eqn{\beta}}
+\item{t}{vector of starting values in [\code{a_tail}, 1] for the tail parameter \eqn{\beta}}
 
-\item{e}{vector of starting values in (\code{a_ei},1] for the extremal index \eqn{\theta}}
+\item{e}{vector of starting values in [\code{a_ei},1] for the extremal index \eqn{\theta}}
 
 \item{s}{vector of starting values in \eqn{(0,\infty)} for the scaling parameter \eqn{\sigma = p(u)^{-1/\beta} \cdot \rho}}
 
@@ -54,13 +69,19 @@ distance function}
 
 \item{ptail}{probability of exceeding P(JJ > u) = \eqn{p(u)}}
 
+\item{s0}{vector of starting values in [\code{a_scale0},\code{b_scale0}] for the scaling parameter \eqn{\rho = p(u)^{1/\beta} \cdot \sigma}}
+
+\item{a_scale0}{lowest possible estimation for the scale parameter \eqn{\rho}}
+
+\item{b_scale0}{highest possible estimation for the scale parameter \eqn{\rho}}
+
 \item{scale0}{scaling parameter \eqn{\rho}}
 }
 \value{
 A tibble with 7 or 5 columns and one row
 \itemize{
-\item \code{t}, \code{e} (and \code{s}) are the starting points for the optimization algorithm that has led to the result.
-\item \code{beta}, \code{theta} (and \code{sigma}) are the estimations for the parameter \eqn{\beta, \theta} (and \eqn{\sigma}).
+\item \code{t}, \code{e} (and \code{s} or \code{s0}, respectively) are the starting points for the optimization algorithm that has led to the result.
+\item \code{beta}, \code{theta} (and \code{sigma} or \code{rho}, respectively) are the estimations for the parameter \eqn{\beta, \theta} (and \eqn{\sigma} or \eqn{\rho}, respectively).
 \item \code{value} is the distance between the sample and the estimated mixture distribution regarding the chosen minimum distance function \code{distance_fct}.
 }
 }
@@ -72,25 +93,28 @@ dirac measure in zero and a Mittag Leffler distribution.
 The function is using a grid of multiple initialization values.
 }
 \details{
-These two optimization functions calculate the minimum distance estimations of
+These three optimization functions calculate the minimum distance estimations of
 \eqn{\beta, \theta, \sigma}, the parameters of the mixture distribution with
 cumulative probability function (c.d.f.).
 \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}
 (x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
 where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
 with tail parameter \eqn{\beta \le 1} and scale parameter
-\eqn{\sigma_* = \theta^{-1/\beta}\cdot \sigma > 0}
-(short notation \eqn{\text{ML}(\beta,\sigma_*)}).
+\eqn{\varsigma = \theta^{-1/\beta}\cdot \sigma > 0}
+(short notation \eqn{\text{ML}(\beta,\varsigma)}).
 
 Use \code{optim_bts}, if you do not have any prior information.
 Use \code{optim_bt}, if you know the excess probability \eqn{p(u) =} \code{ptail}
 and the partial scale parameter \eqn{\rho =} \code{scale0}. Then, \eqn{\sigma = p(u)^{-1/\beta} \cdot \rho}
 only depends on the unkown tail parameter \eqn{\beta} and we can reduce the search from three to two parameters.
+Use \code{optim_btr}, if you know the excess probability \eqn{p(u) =} \code{ptail}
+and want to optimize the partial scale parameter \eqn{\rho =} \code{scale0}
+rather than the whole scale parameter \eqn{\sigma = p(u)^{-1/\beta} \cdot \rho}.
 
-All combinations of \code{e}, \code{t} (and \code{s}) are used as starting values
+All combinations of \code{e}, \code{t} (and \code{s} or \code{s0}, respectively) are used as starting values
 to compute the minimum of \code{distance_fct}.
 The parameters corresponding to the lowest value found, are returned
-as estimation for \code{ei} and \code{tail}.
+as estimation for \code{tail}, \code{ei}, and \code{scale} or \code{scale0}, respectively.
 }
 \examples{
 n <- 10000
@@ -114,4 +138,5 @@ WW <- interarrivaltime(dat_thinned)
 # Optimization:
 optim_bts(WW = WW, distance_fct = distance_cm_mod1)
 optim_bt(WW = WW, distance_fct = distance_cm_mod1, ptail = p, scale0 = rho)
+optim_btr(WW = WW, distance_fct = distance_cm_mod1, ptail = p, b_scale0 = 10)
 }
