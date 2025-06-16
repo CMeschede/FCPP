@@ -178,7 +178,7 @@ optim_btr <- function(WW, distance_fct, ptail,
                                                   scale = ptail ^ {-1 / x[1]} * exp(x[3]))
                              )
                            },
-                           lower = c(a_tail, a_ei, a_scale0), upper = c(1, 1, b_scale0),
+                           lower = c(a_tail, a_ei, log(a_scale0)), upper = c(1, 1, log(b_scale0)),
                            method = method),
                            error = function(x) NA
                          )
