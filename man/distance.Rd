@@ -28,18 +28,19 @@ positive valued sample}
 }
 \description{
 Functions that calculate the Cramer-von Mises distance (with modifications)
-between the empirical distribution function (e.c.d.f.) of a positive valued sample \code{WW}
-and a mixture distribution with the dirac measure in zero and Mittag-Leffler distribution
-as parts.
+between the empirical distribution function (e.c.d.f.) of a positive valued
+sample \code{WW} and a mixture distribution with the dirac measure in zero
+and Mittag-Leffler distribution as parts.
 The sample \code{WW} may be return times of events of interests.
 }
 \details{
-The cumulative distribution function (c.d.f.) of the mixture distribution is given as
+The cumulative distribution function (c.d.f.) of the mixture distribution is
+given as
 \deqn{F_{\beta,\theta,\sigma}(x)=(1-\theta)\cdot\text{I}_{[0,\infty)}(x)+\theta \cdot F^*_{\beta,\theta,\sigma}(x),}
-where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler distribution
-with tail parameter \eqn{\beta \le 1} and scale parameter
-\eqn{\sigma_* = \theta^{-1/\beta}\cdot \sigma > 0}
-(short notation \eqn{\text{ML}(\beta,\sigma_*)}).
+where \eqn{F^*_{\beta,\theta,\sigma}} is the c.d.f. of the Mittag-Leffler
+distribution with tail parameter \eqn{\beta \le 1} and scale parameter
+\eqn{\varsigma = \theta^{-1/\beta}\cdot \sigma > 0}
+(short notation \eqn{\text{ML}(\beta,\varsigma)}).
 The Cramer-von Mises distance between the e.c.d.f. \eqn{F_{n}} of  \code{WW}
 and the mixture distribution is then defined as
 \deqn{
@@ -55,7 +56,8 @@ and the mixture distribution is then defined as
 \bigg)^2 +
 \dfrac{1}{12n^2}+\dfrac{2}{3}(1-\theta)^3
 }
-where \eqn{n=}\code{length(WW)} and \eqn{t_{(1)} \le \dots \le t_{(n )}} the ordered sample.
+where \eqn{n=}\code{length(WW)} and \eqn{t_{(1)} \le \dots \le t_{(n )}} the
+ordered sample.
 The functions \code{distance_cm_mod1} and \code{distance_cm_mod2}
 calculate two modified version of the Cramer-von Mises distance
 \deqn{
@@ -73,7 +75,7 @@ calculate two modified version of the Cramer-von Mises distance
 }
 and
 \deqn{
-\Delta^{[\text{CMmod2}]}( \tilde{F}_{n}, F_{\beta,\theta,\sigma} )
+\Delta^{[\text{CMmod2}]}(F_{n}, F_{\beta,\theta,\sigma} )
 =\int\limits_0^\infty(\max\lbrace F_{n}(x),1-\theta\rbrace
 -F_{\beta,\theta,\sigma}(x))^2
 \, \text{d} \, F^*_{\beta,\theta,\sigma}(x)
@@ -83,7 +85,7 @@ and
 \lceil n(1-\theta) \rceil + 1}^n
 \bigg(
 \dfrac{i-\dfrac{1}{2}}{n}
-- F_{\beta,\theta,\sigma}(t_{(i)} + 1)
+- F_{\beta,\theta,\sigma}(t_{(i)})
 \bigg)^2 +
 \dfrac{n - \lceil n(1-\theta) \rceil}{12 n^3 \theta^3}
 }
@@ -92,11 +94,11 @@ and
 {3 n^3 \theta^3} +
 \dfrac{(n(1-\theta))^2-\lceil n(1-\theta)\rceil^2}
 {n^2 \theta^3}
-F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)} + 1)
+F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})
 }
 \deqn{
 -\dfrac{n (1-\theta) - \lceil n(1-\theta) \rceil}{n \theta^3}
-F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)} + 1)^2
+F_{\beta,\theta,\sigma}(t_{(\lceil n(1-\theta)\rceil)})^2
 }
-respectively, where \eqn{\tilde{F}_n} is the e.c.d.f. of the by shift one transformated observations \eqn{t_1 + 1, \ldots, t_n + 1}.
+respectively.
 }
