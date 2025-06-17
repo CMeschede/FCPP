@@ -9,8 +9,10 @@ data_generation(
   stability = 1,
   ei = 1,
   scale0 = 1,
+  mag_dist = "MAR",
   wait_dist = "stable",
-  u = NULL
+  u = NULL,
+  alpha = NULL
 )
 }
 \arguments{
@@ -24,12 +26,18 @@ used for the waiting time distribution (see 'Details')}
 \item{scale0}{scale parameter \eqn{\rho > 0} of the waiting time distribution.
 Default \code{scale0 = 1}}
 
-\item{wait_dist}{distribution of the waiting times \code{WW}.
+\item{mag_dist}{process of the magnitudes \code{JJ} (default \code{"MAR"}).
+The process can be chosen as \code{"MAR"} or "\code{MM}". (see 'Details')}
+
+\item{wait_dist}{distribution of the waiting times \code{WW} (default \code{"stable"}).
 The waiting time distribution can be chosen as "\code{stable}", "\code{ML}",
 or "\code{pareto}". (see 'Details')}
 
 \item{u}{threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 and the length of the data.frame is \code{n + 1}}
+
+\item{alpha}{is a auxility vector for the moving maxima process (default NULL).
+It is only needed if \code{mag_dist = "MM"}.}
 }
 \value{
 A tibble with two columns
@@ -43,16 +51,22 @@ and scale parameter \code{scale0}
 A tibble / data.frame with two columns \code{JJ} and \code{WW} where \code{JJ} are
 the marks / magnitudes and \code{WW} are the waiting times between the (i-1)-th and
 i-th event.
-The generated process fulfills all assumptions so that the inter-exceedance times (IETs)
+The generated process fulfills all assumptions so that the interexceedance times (IETs)
 regarding a threshold \eqn{u} are asymptotically mixture distributed with the
 dirac measure at point zero and the Mittag-Leffler distribution as parts.
 The IETs are the times between two consequtive extremes which are identified
 by the peak-over-threshold (POT) method.
 }
 \details{
-The marks \code{JJ} form a max-autoregressive process (MAR) which is a
+The marks \code{JJ} either form a max-autoregressive process (MAR) which is a
 stationary time series with extremal index \eqn{\theta \in (0,1]}.
 This process is stationary with extremal index \eqn{\theta}.
+
+Alternatively, the marks \code{JJ} can form a moving maximum process (MM) which
+is also stationary time series with extremal index \eqn{\theta \in (0,1]}.
+A auxility parameter \code{alpha} must be set such that \code{sum(alpha)} = 1
+and \code{max(alpha)} = \eqn{\theta}. If \code{alpha = NULL}, the auxility parameter is chosen for you
+(see \code{FCPP:::MMprocess})
 
 The waiting times \code{WW} are i.i.d. and stochastically independent to the
 marks \code{JJ}.
