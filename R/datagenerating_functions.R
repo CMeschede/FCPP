@@ -22,8 +22,8 @@
 #' or "\code{pareto}". (see 'Details')
 #' @param u threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 #' and the length of the data.frame is \code{n + 1}
-#' @param alpha is a auxility vector for the moving maxima process (default NULL).
-#' It is only needed if \code{mag_dist = "MM"}.
+#' @param alpha is a weighting vector for the moving maxima process (default NULL).
+#' It is only needed if \code{mag_dist = "MM"}. (see 'Details')
 #'
 #' @return
 #' A tibble with two columns
@@ -40,8 +40,8 @@
 #'
 #' Alternatively, the marks \code{JJ} can form a moving maximum process (MM) which
 #' is also stationary time series with extremal index \eqn{\theta \in (0,1]}.
-#' A auxility parameter \code{alpha} must be set such that \code{sum(alpha)} = 1
-#' and \code{max(alpha)} = \eqn{\theta}. If \code{alpha = NULL}, the auxility parameter is chosen for you
+#' A weighting parameter \code{alpha} must be set such that \code{sum(alpha)} = 1, \code{alpha[i]} >= 0
+#' and \code{max(alpha)} = \eqn{\theta}. If \code{alpha = NULL}, the weighting parameter is chosen for you
 #' (see \code{FCPP:::MMprocess})
 #'
 #' The waiting times \code{WW} are i.i.d. and stochastically independent to the
@@ -120,13 +120,7 @@ data_generation <- function(n, stability = 1, ei = 1, scale0 = 1, mag_dist = "MA
          one is unfortunately not implemented, yet.
          Please, choose a stability parameter smaller or larger than one.")
   if(mag_dist == "MAR" & is.numeric(alpha))
-    warning("For the MAR-process no alpha is needed")
-  if(mag_dist == "MM" & is.numeric(alpha)) {
-    if(sum(alpha) != 1) {
-      alpha <- NULL
-      warning("The vector alpha has to sum to one. Therefore the standard choice is used.")
-    }
-  } else {u <- NULL}
+    warning("For the MAR-process no alpha is needed.")
 
   if(stability <= 1) {
     tail <- stability
@@ -134,10 +128,10 @@ data_generation <- function(n, stability = 1, ei = 1, scale0 = 1, mag_dist = "MA
     tail <- 1
   }
   if(mag_dist == "MAR") {
-    J <- MARprocess(n, ei, u)
+    J <- MARprocess(n = n, ei = ei, u = u)
   }
   if(mag_dist == "MM") {
-    J <- MMprocess(n, ei, u)
+    J <- MMprocess(n = n, ei = ei, u = u, alpha = alpha)
   }
   # generating waiting times:
   # tail == 1:
@@ -182,15 +176,30 @@ if(wait_dist == "stable") { # stable
   return(tibble::tibble(JJ = J, WW = W))
 }
 
-MMprocess <- function(n , ei, u = NULL) {
-  if(ei == 1) {alpha <- 1}
-  if(ei < 1 & ei >= 0.8) {alpha <- c(ei, 1-ei)}
-  if(ei < 0.8 & ei >= 0.6){alpha <- c(ei, 0.2, 1-ei-0.2)}
-  if(ei < 0.6 & ei >= 0.5){alpha <- c(ei, 0.2, 0.2, 1-ei-0.4)}
-  if(ei < 0.5 & ei >= 0.4 ){alpha <- c(ei, 0.2, 0.2, 0.1, 1-ei-0.5)}
-  if(ei < 0.4 & ei >= 0.3 ){alpha <- c(ei, 0.2, 0.2, 0.1, 0.1, 1-ei-0.6)}
-  if(ei < 0.3 & ei >= 0.2 ){alpha <- c(ei, 0.2, 0.2, 0.1, 0.1, 0.1, 1-ei-0.7)}
-  if(ei < 0.2 & ei >= 0.1 ){alpha <- c(ei, rep(0.1, 5), rep(0.05, 7), 1-ei-0.85)}
+MMprocess <- function(n , ei, u = NULL, alpha = NULL) {
+  if(ei == 1) {weighting <- 1}
+  if(ei < 1 & ei >= 0.8) {weighting <- c(ei, 1-ei)}
+  if(ei < 0.8 & ei >= 0.6){weighting <- c(ei, 0.2, 1-ei-0.2)}
+  if(ei < 0.6 & ei >= 0.5){weighting <- c(ei, 0.2, 0.2, 1-ei-0.4)}
+  if(ei < 0.5 & ei >= 0.4 ){weighting <- c(ei, 0.2, 0.2, 0.1, 1-ei-0.5)}
+  if(ei < 0.4 & ei >= 0.3 ){weighting <- c(ei, 0.2, 0.2, 0.1, 0.1, 1-ei-0.6)}
+  if(ei < 0.3 & ei >= 0.2 ){weighting <- c(ei, 0.2, 0.2, 0.1, 0.1, 0.1, 1-ei-0.7)}
+  if(ei < 0.2 & ei >= 0.1 ){weighting <- c(ei, rep(0.1, 5), rep(0.05, 7), 1-ei-0.85)}
+  if(is.null(alpha)) {alpha <- weighting} else {
+    if(is.numeric(alpha)) {
+      if(sum(alpha) != 1 | any(alpha < 0)) {
+        alpha <- weighting
+        warning(paste("The chosen weighting alpha eigher do not sum to one or has elements smaller zero.
+                The default alpha = ", paste(alpha, collapse = ", "), " is chosen.", sep = ""))
+      }
+      if(max(alpha) != ei) {
+        alpha <- weighting
+        warning(paste("The maximum of the chosen weighting alpha does not equal ei = ", ei,".
+                The default alpha ", paste(alpha, collapse = ", ") , " is chosen.", sep = ""))
+      }
+    }
+  }
+
   k <- length(alpha)
   if(is.numeric(u)) {
     p <-  extRemes::pevd(u / ei, scale = 1, shape = 1, loc = 1)
@@ -198,8 +207,10 @@ MMprocess <- function(n , ei, u = NULL) {
     J0 <- extRemes::qevd(r, scale = 1, shape = 1, loc = 1)
     eps <- extRemes::revd(n + k + 1, scale = 1, shape = 1, loc = 1)
     eps[k] <- J0
+  } else {
+    eps <- extRemes::revd(n + k, scale = 1, shape = 1, loc = 1)
   }
-  m <- length(eps)
+  m <- length(eps) - k
   J <- rep(0, m)
   for(i in seq_along(J)) {
     J[i] <- max(alpha * eps[(i+k-1):i])
@@ -207,7 +218,7 @@ MMprocess <- function(n , ei, u = NULL) {
   return(J)
 }
 
-MARprocess <- function(n, ei, u) {
+MARprocess <- function(n, ei, u = NULL) {
   # generating event values (magnitudes):
   eps <- extRemes::revd(n, scale = 1, shape = 1, loc = 1)
   # if a threshold u is given the first given magnitude exceeds the threshold

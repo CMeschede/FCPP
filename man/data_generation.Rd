@@ -36,8 +36,8 @@ or "\code{pareto}". (see 'Details')}
 \item{u}{threshold  (default NULL); if \eqn{u} is numeric, it holds \code{JJ[1] > u}
 and the length of the data.frame is \code{n + 1}}
 
-\item{alpha}{is a auxility vector for the moving maxima process (default NULL).
-It is only needed if \code{mag_dist = "MM"}.}
+\item{alpha}{is a weighting vector for the moving maxima process (default NULL).
+It is only needed if \code{mag_dist = "MM"}. (see 'Details')}
 }
 \value{
 A tibble with two columns
@@ -64,8 +64,8 @@ This process is stationary with extremal index \eqn{\theta}.
 
 Alternatively, the marks \code{JJ} can form a moving maximum process (MM) which
 is also stationary time series with extremal index \eqn{\theta \in (0,1]}.
-A auxility parameter \code{alpha} must be set such that \code{sum(alpha)} = 1
-and \code{max(alpha)} = \eqn{\theta}. If \code{alpha = NULL}, the auxility parameter is chosen for you
+A weighting parameter \code{alpha} must be set such that \code{sum(alpha)} = 1, \code{alpha[i]} >= 0
+and \code{max(alpha)} = \eqn{\theta}. If \code{alpha = NULL}, the weighting parameter is chosen for you
 (see \code{FCPP:::MMprocess})
 
 The waiting times \code{WW} are i.i.d. and stochastically independent to the
