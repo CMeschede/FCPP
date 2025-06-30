@@ -135,6 +135,10 @@ optim_bts <- function(WW, distance_fct,
                                                              error = function(x) NA ))
   )
   est <- dplyr::select(est, -opt)
+  pos <- which(est$beta > a_tail & est$theta > a_ei)
+  if(length(pos) >= 1) {
+    est <- est[pos, ]
+  }
   est2 <- est[which.min(est$value), ]
   return(est2)
 }
@@ -194,6 +198,20 @@ optim_btr <- function(WW, distance_fct, ptail,
                                                              error = function(x) NA ))
   )
   est <- dplyr::select(est, -opt)
+  if(is.finite(b_scale0)) {
+    pos <- which(est$beta > a_tail & est$theta > a_ei &
+                   (est$rho > a_scale0 | est$rho < b_scale0))
+  } else {
+    pos <- which(est$beta > a_tail & est$theta > a_ei & est$rho > a_scale0)
+  }
+  if(length(pos) >= 1) {
+    est <- est[pos, ]
+  } else {
+    pos <- which(est$beta > a_tail, est$theta > a_ei)
+    if(length(pos) >= 1) {
+      est <- est[pos, ]
+    }
+  }
   est2 <- est[which.min(est$value), ]
   return(est2)
 }
@@ -232,6 +250,10 @@ optim_bt <- function(WW, distance_fct, ptail, scale0,
                                                              error = function(x) NA ))
   )
   est <- dplyr::select(est, -opt)
+  pos <- which(est$beta > a_tail & est$theta > a_ei)
+  if(length(pos) >= 1) {
+    est <- est[pos, ]
+  }
   est2 <- est[which.min(est$value), ]
   return(est2)
 }
